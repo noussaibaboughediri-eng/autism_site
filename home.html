@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نجوم — منصة أطفال التوحد</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --cream:#faf6ef;--warm:#f5ece0;
+  --clay:#c17b5c;--clay2:#e8a882;
+  --moss:#5a7c65;--moss2:#8dba9a;
+  --sky:#6fa3c4;--sky2:#a8d0e6;
+  --sun:#e8c45a;--sun2:#f5d98a;
+  --lilac:#9b7fb8;--lilac2:#c4a8d8;
+  --ink:#2c2318;--ink2:#5a4d3e;
+  --border:rgba(44,35,24,0.1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Tajawal',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+.cur{width:14px;height:14px;background:var(--clay);border-radius:50%;position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:multiply;}
+.cur-r{width:38px;height:38px;border:2px solid var(--clay);border-radius:50%;position:fixed;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);opacity:.45;transition:width .3s,height .3s;}
+
+/* NOISE */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
+
+/* ═══ NAV ═══ */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;}
+.nav-pill{display:flex;align-items:center;gap:1.4rem;background:rgba(250,246,239,.85);backdrop-filter:blur(20px);border:1.5px solid rgba(193,123,92,.2);border-radius:50px;padding:.5rem 1.6rem;}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:900;font-size:.95rem;color:var(--ink);text-decoration:none;}
+.logo-star{font-size:1.2rem;animation:spin 8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.nav-links{display:flex;gap:.1rem;}
+.nav-link{font-size:.8rem;font-weight:700;color:var(--ink2);text-decoration:none;padding:.32rem .75rem;border-radius:50px;transition:all .2s;}
+.nav-link:hover{background:var(--clay);color:#fff;}
+.lang-pill{display:flex;background:var(--warm);border:1.5px solid var(--border);border-radius:50px;overflow:hidden;}
+.lbtn{padding:.28rem .82rem;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:.76rem;font-weight:800;color:var(--ink2);cursor:pointer;transition:all .2s;}
+.lbtn.active{background:var(--clay);color:#fff;border-radius:50px;}
+
+/* ═══ HERO ═══ */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8rem 4rem 4rem;position:relative;overflow:hidden;gap:3rem;}
+.hero::before{content:'';position:absolute;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--clay2),var(--clay));opacity:.09;top:-180px;left:-180px;animation:breathe 11s ease-in-out infinite;}
+.hero::after{content:'';position:absolute;width:420px;height:420px;border-radius:50%;background:var(--moss2);opacity:.07;bottom:-120px;right:-80px;animation:breathe 14s ease-in-out infinite reverse;}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+
+.hero-left{position:relative;z-index:2;}
+.eyebrow{display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1.6rem;}
+.eyebrow-line{width:36px;height:2px;background:var(--clay);border-radius:2px;}
+.eyebrow-txt{font-size:.72rem;font-weight:900;color:var(--clay);letter-spacing:.18em;text-transform:uppercase;}
+.hero-title{font-size:clamp(2.8rem,5vw,5.2rem);font-weight:900;line-height:1.06;margin-bottom:2rem;color:var(--ink);}
+.wg{color:var(--moss);position:relative;display:inline-block;}
+.wg::after{content:'';position:absolute;bottom:5px;left:0;right:0;height:9px;background:var(--sun2);z-index:-1;border-radius:4px;transform:skewX(-8deg);}
+.wc{color:var(--clay);font-style:italic;}
+.hero-sub{font-size:.97rem;color:var(--ink2);line-height:1.9;max-width:460px;margin-bottom:3rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-p{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.9rem;background:var(--ink);color:var(--cream);border-radius:50px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:4px 4px 0 var(--clay);}
+.btn-p:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--clay);}
+.btn-o{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.9rem;background:transparent;color:var(--ink);border-radius:50px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);cursor:pointer;transition:all .25s;}
+.btn-o:hover{background:var(--ink);color:var(--cream);}
+
+/* Hero Right */
+.hero-right{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;height:500px;}
+.h-circle{width:280px;height:280px;border-radius:50%;background:linear-gradient(135deg,var(--clay2),var(--clay));display:flex;align-items:center;justify-content:center;font-size:5.5rem;box-shadow:0 24px 60px rgba(193,123,92,.32);animation:float0 8s ease-in-out infinite;--r:0deg;}
+.fc{position:absolute;background:#fff;border-radius:20px;padding:1.2rem 1.4rem;box-shadow:0 10px 36px rgba(44,35,24,.11),3px 3px 0 rgba(44,35,24,.05);border:1.5px solid rgba(44,35,24,.05);}
+.fc1{width:190px;top:16px;right:10px;animation:float0 6s ease-in-out infinite;--r:-3deg;background:#fff;}
+.fc2{width:170px;bottom:70px;right:70px;animation:float0 7s 2s ease-in-out infinite;--r:4deg;background:var(--sun2);}
+.fc3{width:160px;top:130px;left:5px;animation:float0 6.5s 1s ease-in-out infinite;--r:-5deg;background:var(--sky2);}
+.fc4{width:148px;bottom:14px;left:60px;animation:float0 7.5s .5s ease-in-out infinite;--r:2deg;background:var(--lilac2);}
+@keyframes float0{0%,100%{transform:translateY(0) rotate(var(--r));}50%{transform:translateY(-13px) rotate(var(--r));}}
+.fc-ico{font-size:1.8rem;margin-bottom:.4rem;}
+.fc-lbl{font-size:.7rem;font-weight:800;color:var(--ink);margin-bottom:.15rem;}
+.fc-val{font-size:1.5rem;font-weight:900;color:var(--ink);}
+
+/* ═══ STATS STRIP ═══ */
+.strip{background:var(--ink);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-around;gap:1rem;position:relative;z-index:2;}
+.si{text-align:center;}
+.sn{font-size:2.2rem;font-weight:900;color:var(--sun2);font-family:'Righteous',cursive;}
+.sl{font-size:.72rem;color:rgba(250,246,239,.55);margin-top:.2rem;}
+.sdiv{width:1px;height:44px;background:rgba(250,246,239,.08);}
+
+/* ═══ SECTION LABELS ═══ */
+.sl2{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:900;color:var(--clay);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;}
+.st{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;line-height:1.12;margin-bottom:.8rem;color:var(--ink);}
+.ss{font-size:.93rem;color:var(--ink2);line-height:1.9;max-width:460px;margin-bottom:2.6rem;}
+
+/* ═══ GAMES ═══ */
+.games-sec{padding:7rem 4rem;background:var(--warm);position:relative;overflow:hidden;}
+.games-sec::before{content:'';position:absolute;top:-55px;left:0;right:0;height:110px;background:var(--cream);clip-path:polygon(0 0,100% 0,100% 35%,0 100%);}
+.games-sec::after{content:'';position:absolute;bottom:-55px;left:0;right:0;height:110px;background:var(--cream);clip-path:polygon(0 65%,100% 0,100% 100%,0 100%);z-index:1;}
+.games-inner{position:relative;z-index:2;max-width:1160px;margin:0 auto;}
+.games-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.8rem;flex-wrap:wrap;gap:1rem;}
+.see-all{display:inline-flex;align-items:center;gap:.35rem;font-size:.83rem;font-weight:800;color:var(--clay);text-decoration:none;border-bottom:2px solid var(--clay);padding-bottom:.1rem;transition:gap .2s;}
+.see-all:hover{gap:.7rem;}
+
+/* 4 screenshot grid */
+.ss-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:1.4rem;}
+.ss-slot{border-radius:20px;overflow:hidden;position:relative;aspect-ratio:16/10;cursor:pointer;box-shadow:0 8px 28px rgba(44,35,24,.11);border:2px solid rgba(44,35,24,.06);transition:transform .35s cubic-bezier(.34,1.4,.64,1),box-shadow .35s;}
+.ss-slot:hover{transform:translateY(-7px) scale(1.016);box-shadow:0 22px 52px rgba(44,35,24,.17);}
+.ss-slot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
+.ss-slot:hover img{transform:scale(1.05);}
+.ss-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;}
+.ss-ph-ico{font-size:2.6rem;}
+.ss-ph-txt{font-size:.75rem;font-weight:700;color:rgba(44,35,24,.35);text-align:center;padding:0 1rem;}
+.ssp1 .ss-ph{background:linear-gradient(135deg,#cce8d8,#a4c8b4);}
+.ssp2 .ss-ph{background:linear-gradient(135deg,#fcdec8,#f4b898);}
+.ssp3 .ss-ph{background:linear-gradient(135deg,#c8dff0,#98bedd);}
+.ssp4 .ss-ph{background:linear-gradient(135deg,#e4d4f0,#c0a4d8);}
+.ss-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(44,35,24,.75),transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.1rem 1.3rem;opacity:0;transition:opacity .3s;}
+.ss-slot:hover .ss-ov{opacity:1;}
+.ss-gname{font-size:.92rem;font-weight:800;color:#fff;margin-bottom:.18rem;}
+.ss-gdesc{font-size:.72rem;color:rgba(255,255,255,.72);}
+.upload-note{text-align:center;margin-top:1.3rem;font-size:.76rem;color:var(--ink2);opacity:.55;}
+.upload-note code{background:rgba(44,35,24,.06);padding:.1rem .4rem;border-radius:4px;font-size:.7rem;}
+
+/* ═══ FEATURES BENTO ═══ */
+.feat-sec{padding:7rem 4rem;max-width:1160px;margin:0 auto;}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1.1rem;}
+.bc{background:#fff;border-radius:22px;padding:1.9rem;border:1.5px solid rgba(44,35,24,.07);box-shadow:0 4px 18px rgba(44,35,24,.05);transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s;position:relative;overflow:hidden;}
+.bc:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(44,35,24,.11);}
+.bc::after{content:'';position:absolute;width:110px;height:110px;border-radius:50%;opacity:.07;bottom:-28px;left:-28px;transition:transform .4s;}
+.bc:hover::after{transform:scale(1.5);}
+.bc1{grid-column:span 2;}.bc1::after{background:var(--moss);}
+.bc2{grid-column:span 2;}.bc2::after{background:var(--sky);}
+.bc3{grid-column:span 2;}.bc3::after{background:var(--clay);}
+.bc4{grid-column:span 3;}.bc4::after{background:var(--lilac);width:150px;height:150px;bottom:-35px;left:-35px;}
+.bc5{grid-column:span 3;}.bc5::after{background:var(--sun);width:150px;height:150px;bottom:-35px;left:-35px;}
+.bc-ico{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.45rem;margin-bottom:1.1rem;}
+.bc-t{font-size:.97rem;font-weight:800;margin-bottom:.45rem;}
+.bc-d{font-size:.8rem;color:var(--ink2);line-height:1.7;}
+
+/* ═══ AUTISM DARK ═══ */
+.aut-sec{background:var(--ink);padding:7rem 4rem;position:relative;overflow:hidden;}
+.aut-sec::before{content:'"';position:absolute;font-size:28rem;font-family:'Righteous',cursive;color:rgba(250,246,239,.02);top:-3rem;right:-1.5rem;line-height:1;pointer-events:none;user-select:none;}
+.aut-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+@media(max-width:760px){.aut-inner{grid-template-columns:1fr;gap:3rem;}}
+.aut-left .sl2{color:var(--clay2);}
+.aut-left .st{color:var(--cream);}
+.aut-left .ss{color:rgba(250,246,239,.55);}
+.ltrack{display:flex;flex-direction:column;gap:.7rem;}
+.lrow{display:flex;align-items:center;gap:1rem;padding:1rem 1.3rem;border-radius:13px;border:1px solid rgba(250,246,239,.07);transition:background .2s,transform .2s;cursor:default;}
+.lrow:hover{background:rgba(250,246,239,.05);transform:translateX(-4px);}
+.lbar{width:4px;height:38px;border-radius:2px;flex-shrink:0;}
+.l1 .lbar{background:var(--moss2);}
+.l2 .lbar{background:var(--sun);}
+.l3 .lbar{background:var(--clay);}
+.li h4{font-size:.87rem;font-weight:800;color:var(--cream);margin-bottom:.22rem;}
+.li p{font-size:.76rem;color:rgba(250,246,239,.48);line-height:1.55;}
+.aut-right{display:flex;flex-direction:column;gap:1rem;}
+.fcard{background:rgba(250,246,239,.04);border:1px solid rgba(250,246,239,.08);border-radius:17px;padding:1.5rem;transition:background .2s,transform .2s;}
+.fcard:hover{background:rgba(250,246,239,.07);transform:translateX(4px);}
+.fcard-ico{font-size:1.7rem;margin-bottom:.6rem;}
+.fcard-t{font-size:.87rem;font-weight:800;color:var(--cream);margin-bottom:.35rem;}
+.fcard-d{font-size:.77rem;color:rgba(250,246,239,.52);line-height:1.7;}
+.fcard.cta{background:linear-gradient(135deg,var(--clay),#a0603e);border:none;}
+.fcard.cta .fcard-t,.fcard.cta .fcard-d{color:rgba(250,246,239,.9);}
+.fcard.cta .fcard-d{color:rgba(250,246,239,.72);}
+.cta-a{display:inline-block;margin-top:.9rem;padding:.55rem 1.4rem;background:var(--cream);color:var(--clay);border-radius:50px;font-weight:800;font-size:.82rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+.cta-a:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.25);}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--ink);border-top:1px solid rgba(250,246,239,.06);padding:2.8rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.flogo{display:flex;align-items:center;gap:.55rem;font-weight:900;font-size:.95rem;color:var(--cream);text-decoration:none;}
+.fcopy{font-size:.76rem;color:rgba(250,246,239,.32);}
+.ftech{font-size:.7rem;color:rgba(250,246,239,.18);}
+
+/* ═══ REVEAL ═══ */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s ease;}
+.rv.up{opacity:1;transform:translateY(0);}
+.rvl{opacity:0;transform:translateX(26px);transition:opacity .75s ease,transform .75s ease;}
+.rvl.up{opacity:1;transform:translateX(0);}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:6rem 2rem 3rem;text-align:center;}
+  .hero-right{height:260px;margin-top:2rem;}
+  .eyebrow{justify-content:center;}
+  .hero-btns{justify-content:center;}
+  .bento{grid-template-columns:1fr 1fr;}
+  .bc1,.bc2,.bc3,.bc4,.bc5{grid-column:span 2;}
+  .games-sec,.feat-sec,.aut-sec{padding:5rem 2rem;}
+  footer{padding:2.5rem 2rem;flex-direction:column;text-align:center;}
+  nav{padding:.8rem 1.2rem;}
+}
+@media(max-width:600px){
+  .bento{grid-template-columns:1fr;}
+  .bc1,.bc2,.bc3,.bc4,.bc5{grid-column:span 1;}
+  .ss-grid{grid-template-columns:1fr;}
+  .strip{flex-wrap:wrap;gap:1.5rem;padding:2rem;}
+  .sdiv{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-r" id="curR"></div>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="logo-star">✦</span>
+    <span data-ar="نجوم التوحد" data-en="Autism Stars">نجوم التوحد</span>
+  </a>
+  <div class="nav-pill">
+    <div class="nav-links">
+      <a class="nav-link" href="#games" data-ar="الألعاب" data-en="Games">الألعاب</a>
+      <a class="nav-link" href="#features" data-ar="المميزات" data-en="Features">المميزات</a>
+      <a class="nav-link" href="#about" data-ar="عن التوحد" data-en="About Autism">عن التوحد</a>
+    </div>
+    <div class="lang-pill">
+      <button class="lbtn active" id="btn-ar" onclick="setLang('ar')">ع</button>
+      <button class="lbtn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-txt" data-ar="منصة متخصصة • موثوقة • آمنة" data-en="Specialized • Trusted • Secure">منصة متخصصة • موثوقة • آمنة</span>
+    </div>
+    <h1 class="hero-title">
+      <span data-ar="كل طفل" data-en="Every Child">كل طفل</span><br>
+      <span class="wg" data-ar="نجمٌ" data-en="is a Star">نجمٌ</span><br>
+      <span data-ar="يستحق " data-en="deserving ">يستحق </span><span class="wc" data-ar="الأفضل" data-en="the Best">الأفضل</span>
+    </h1>
+    <p class="hero-sub" data-ar="منصة رقمية متكاملة تجمع الأسر والأطباء لمتابعة حالات أطفال التوحد، وتسهيل التواصل وتبادل المعلومات الطبية بشكل آمن وسريع." data-en="An integrated digital platform connecting families and doctors to track autism cases, facilitate communication and exchange medical information safely.">
+      منصة رقمية متكاملة تجمع الأسر والأطباء لمتابعة حالات أطفال التوحد، وتسهيل التواصل وتبادل المعلومات الطبية بشكل آمن وسريع.
+    </p>
+    <div class="hero-btns">
+      <a class="btn-p" href="index.html" data-ar="🌱 سجّل طفلك" data-en="🌱 Register Your Child">🌱 سجّل طفلك</a>
+      <button class="btn-o" onclick="goAdmin()" data-ar="⚙️ لوحة الإدارة" data-en="⚙️ Admin Panel">⚙️ لوحة الإدارة</button>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="h-circle">🧩</div>
+    <div class="fc fc1">
+      <div class="fc-ico">👨‍👩‍👦</div>
+      <div class="fc-lbl" data-ar="أسر مسجّلة" data-en="Families">أسر مسجّلة</div>
+      <div class="fc-val" id="count-registered">—</div>
+    </div>
+    <div class="fc fc2">
+      <div class="fc-ico">✅</div>
+      <div class="fc-lbl" data-ar="موافقة" data-en="Approved">موافقة</div>
+      <div class="fc-val" id="count-accepted">—</div>
+    </div>
+    <div class="fc fc3">
+      <div class="fc-ico">🔐</div>
+      <div class="fc-lbl" data-ar="أمان" data-en="Security">أمان</div>
+      <div class="fc-val">100%</div>
+    </div>
+    <div class="fc fc4">
+      <div class="fc-ico">⏰</div>
+      <div class="fc-lbl" data-ar="متاح" data-en="Always On">متاح</div>
+      <div class="fc-val">24/24</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS STRIP ═══ -->
+<div class="strip">
+  <div class="si"><div class="sn" id="s-reg">—</div><div class="sl" data-ar="طفل مسجّل" data-en="Registered Children">طفل مسجّل</div></div>
+  <div class="sdiv"></div>
+  <div class="si"><div class="sn" id="s-acc">—</div><div class="sl" data-ar="تمت الموافقة" data-en="Approved Cases">تمت الموافقة</div></div>
+  <div class="sdiv"></div>
+  <div class="si"><div class="sn">24/7</div><div class="sl" data-ar="متاح دائماً" data-en="Always Available">متاح دائماً</div></div>
+  <div class="sdiv"></div>
+  <div class="si"><div class="sn">100%</div><div class="sl" data-ar="آمن وخاص" data-en="Safe & Private">آمن وخاص</div></div>
+</div>
+
+<!-- ═══ GAMES ═══ -->
+<section class="games-sec" id="games">
+  <div class="games-inner">
+    <div class="games-head rv">
+      <div>
+        <div class="sl2">🎮 <span data-ar="ألعاب تعليمية" data-en="Educational Games">ألعاب تعليمية</span></div>
+        <h2 class="st" data-ar="ألعابنا التفاعلية" data-en="Our Interactive Games">ألعابنا التفاعلية</h2>
+        <p class="ss" data-ar="ألعاب مصممة لتنمية مهارات التواصل والإدراك. إليك لمحة مما صممناه." data-en="Games designed to develop communication and cognitive skills. Here's a preview of what we built.">ألعاب مصممة لتنمية مهارات التواصل والإدراك. إليك لمحة مما صممناه.</p>
+      </div>
+      <a class="see-all" href="#" data-ar="عرض جميع الألعاب ←" data-en="See All Games ←">عرض جميع الألعاب ←</a>
+    </div>
+
+    <!-- 4 SCREENSHOT SLOTS — استبدل src بمسار صورتك الحقيقية -->
+    <div class="ss-grid rv">
+
+      <div class="ss-slot ssp1">
+        <!-- لإضافة صورة حقيقية: احذف div.ss-ph وضع بدلها: <img src="game1.png" alt="..."> -->
+        <div class="ss-ph">
+          <div class="ss-ph-ico">🎨</div>
+          <div class="ss-ph-txt" data-ar="📌 ضع سكرين شوت اللعبة الأولى هنا" data-en="📌 Place Game 1 Screenshot Here">📌 ضع سكرين شوت اللعبة الأولى هنا</div>
+        </div>
+        <div class="ss-ov">
+          <div class="ss-gname" data-ar="🎨 الألوان والأشكال" data-en="🎨 Colors & Shapes">🎨 الألوان والأشكال</div>
+          <div class="ss-gdesc" data-ar="تعلم الألوان بطريقة بصرية ممتعة" data-en="Learn colors in a fun visual way">تعلم الألوان بطريقة بصرية ممتعة</div>
+        </div>
+      </div>
+
+      <div class="ss-slot ssp2">
+        <div class="ss-ph">
+          <div class="ss-ph-ico">🐾</div>
+          <div class="ss-ph-txt" data-ar="📌 ضع سكرين شوت اللعبة الثانية هنا" data-en="📌 Place Game 2 Screenshot Here">📌 ضع سكرين شوت اللعبة الثانية هنا</div>
+        </div>
+        <div class="ss-ov">
+          <div class="ss-gname" data-ar="🐾 عالم الحيوانات" data-en="🐾 Animal World">🐾 عالم الحيوانات</div>
+          <div class="ss-gdesc" data-ar="تعرف على الحيوانات وأصواتها" data-en="Discover animals and their sounds">تعرف على الحيوانات وأصواتها</div>
+        </div>
+      </div>
+
+      <div class="ss-slot ssp3">
+        <div class="ss-ph">
+          <div class="ss-ph-ico">🔢</div>
+          <div class="ss-ph-txt" data-ar="📌 ضع سكرين شوت اللعبة الثالثة هنا" data-en="📌 Place Game 3 Screenshot Here">📌 ضع سكرين شوت اللعبة الثالثة هنا</div>
+        </div>
+        <div class="ss-ov">
+          <div class="ss-gname" data-ar="🔢 أرقامي الأولى" data-en="🔢 My First Numbers">🔢 أرقامي الأولى</div>
+          <div class="ss-gdesc" data-ar="تعلم العد بطريقة تفاعلية" data-en="Learn counting interactively">تعلم العد بطريقة تفاعلية</div>
+        </div>
+      </div>
+
+      <div class="ss-slot ssp4">
+        <div class="ss-ph">
+          <div class="ss-ph-ico">😊</div>
+          <div class="ss-ph-txt" data-ar="📌 ضع سكرين شوت اللعبة الرابعة هنا" data-en="📌 Place Game 4 Screenshot Here">📌 ضع سكرين شوت اللعبة الرابعة هنا</div>
+        </div>
+        <div class="ss-ov">
+          <div class="ss-gname" data-ar="😊 تعابير الوجه" data-en="😊 Facial Expressions">😊 تعابير الوجه</div>
+          <div class="ss-gdesc" data-ar="فهم المشاعر والتعبيرات" data-en="Understand emotions and expressions">فهم المشاعر والتعبيرات</div>
+        </div>
+      </div>
+
+    </div>
+    <p class="upload-note">
+      <span data-ar="لإضافة صورك الحقيقية: " data-en="To add real images: ">لإضافة صورك الحقيقية: </span>
+      <span data-ar="احذف div.ss-ph وضع بدلها" data-en="Remove div.ss-ph and replace with">احذف <code>div.ss-ph</code> وضع بدلها</span>
+      <code>&lt;img src="game1.png" alt="..."&gt;</code>
+    </p>
+  </div>
+</section>
+
+<!-- ═══ FEATURES BENTO ═══ -->
+<section id="features">
+  <div class="feat-sec">
+    <div class="rv" style="margin-bottom:2.8rem;">
+      <div class="sl2">✦ <span data-ar="ما نقدمه" data-en="What We Offer">ما نقدمه</span></div>
+      <h2 class="st" data-ar="منصة شاملة لكل الاحتياجات" data-en="A Platform for Every Need">منصة شاملة لكل الاحتياجات</h2>
+    </div>
+    <div class="bento rv">
+      <div class="bc bc1">
+        <div class="bc-ico" style="background:#d4eadc;">📋</div>
+        <div class="bc-t" data-ar="تسجيل شامل" data-en="Complete Registration">تسجيل شامل</div>
+        <div class="bc-d" data-ar="نموذج متكامل يشمل كل المعلومات الطبية والشخصية للطفل." data-en="A complete form covering all medical and personal information for the child.">نموذج متكامل يشمل كل المعلومات الطبية والشخصية للطفل.</div>
+      </div>
+      <div class="bc bc2">
+        <div class="bc-ico" style="background:#cde0f0;">🔐</div>
+        <div class="bc-t" data-ar="أمان تام" data-en="Full Security">أمان تام</div>
+        <div class="bc-d" data-ar="بيانات مشفرة. لا أحد يصل للمعلومات إلا بعد موافقة الإدارة." data-en="Encrypted data. No access without admin approval.">بيانات مشفرة. لا أحد يصل للمعلومات إلا بعد موافقة الإدارة.</div>
+      </div>
+      <div class="bc bc3">
+        <div class="bc-ico" style="background:#fde0cc;">📧</div>
+        <div class="bc-t" data-ar="إشعارات فورية" data-en="Instant Alerts">إشعارات فورية</div>
+        <div class="bc-d" data-ar="إيميل تلقائي عند قبول أو رفض أي طلب." data-en="Automatic email on request approval or rejection.">إيميل تلقائي عند قبول أو رفض أي طلب.</div>
+      </div>
+      <div class="bc bc4">
+        <div class="bc-ico" style="background:#e8d8f0;">👨‍⚕️</div>
+        <div class="bc-t" data-ar="سجل طبي كامل" data-en="Complete Medical Record">سجل طبي كامل</div>
+        <div class="bc-d" data-ar="حفظ كامل لبيانات التشخيص الطبي والطبيب المعالج ونوع العلاج. يمكن الاطلاع عليها في أي وقت من أي مكان بشكل آمن." data-en="Complete storage of diagnosis data, treating physician, and treatment type. Accessible anytime, anywhere securely.">حفظ كامل لبيانات التشخيص الطبي والطبيب المعالج ونوع العلاج. يمكن الاطلاع عليها في أي وقت من أي مكان.</div>
+      </div>
+      <div class="bc bc5">
+        <div class="bc-ico" style="background:#faf6e3;">📊</div>
+        <div class="bc-t" data-ar="لوحة إدارة متكاملة" data-en="Integrated Admin Dashboard">لوحة إدارة متكاملة</div>
+        <div class="bc-d" data-ar="أدوات شاملة: قبول، رفض، حذف، وعرض التفاصيل الكاملة لكل حالة مع إمكانية بحث وتصفية متقدمة." data-en="Comprehensive tools: accept, reject, delete, and view full case details with advanced filtering and search.">أدوات شاملة: قبول، رفض، حذف، وعرض التفاصيل الكاملة لكل حالة مع إمكانية بحث وتصفية متقدمة.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AUTISM DARK ═══ -->
+<section class="aut-sec" id="about">
+  <div class="aut-inner">
+    <div class="aut-left rv">
+      <div class="sl2">✦ <span data-ar="معلومات طبية" data-en="Medical Information">معلومات طبية</span></div>
+      <h2 class="st" data-ar="طيف التوحد" data-en="The Autism Spectrum">طيف التوحد</h2>
+      <p class="ss" data-ar="التوحد طيف واسع يختلف من طفل لآخر. فهم درجة التوحد يساعد على تقديم الدعم الصحيح." data-en="Autism is a wide spectrum that varies from child to child. Understanding autism levels helps provide the right support.">التوحد طيف واسع يختلف من طفل لآخر. فهم درجة التوحد يساعد على تقديم الدعم الصحيح.</p>
+      <div class="ltrack">
+        <div class="lrow l1">
+          <div class="lbar"></div>
+          <div class="li">
+            <h4 data-ar="خفيف — الدرجة الأولى" data-en="Mild — Level 1">خفيف — الدرجة الأولى</h4>
+            <p data-ar="يحتاج دعماً محدوداً. يتواصل لكن يجد صعوبة في التفاعل الاجتماعي." data-en="Requires limited support. Can communicate but struggles with social interaction.">يحتاج دعماً محدوداً. يتواصل لكن يجد صعوبة في التفاعل الاجتماعي.</p>
+          </div>
+        </div>
+        <div class="lrow l2">
+          <div class="lbar"></div>
+          <div class="li">
+            <h4 data-ar="متوسط — الدرجة الثانية" data-en="Moderate — Level 2">متوسط — الدرجة الثانية</h4>
+            <p data-ar="يحتاج دعماً ملحوظاً. صعوبة واضحة في التواصل والسلوك المتكرر." data-en="Requires substantial support. Noticeable difficulty in communication and repetitive behavior.">يحتاج دعماً ملحوظاً. صعوبة واضحة في التواصل والسلوك المتكرر.</p>
+          </div>
+        </div>
+        <div class="lrow l3">
+          <div class="lbar"></div>
+          <div class="li">
+            <h4 data-ar="شديد — الدرجة الثالثة" data-en="Severe — Level 3">شديد — الدرجة الثالثة</h4>
+            <p data-ar="يحتاج دعماً مكثفاً. صعوبة شديدة في التواصل وضعف الاستقلالية." data-en="Requires intensive support. Severe difficulty in communication and limited independence.">يحتاج دعماً مكثفاً. صعوبة شديدة في التواصل وضعف الاستقلالية.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aut-right rvl">
+      <div class="fcard">
+        <div class="fcard-ico">💡</div>
+        <div class="fcard-t" data-ar="هل تعلم؟" data-en="Did You Know?">هل تعلم؟</div>
+        <div class="fcard-d" data-ar="التوحد ليس مرضاً بل طريقة مختلفة لرؤية العالم. كثير من أطفال التوحد لديهم مواهب استثنائية في الرياضيات والفن والموسيقى." data-en="Autism is not a disease but a different way of seeing the world. Many autistic children have exceptional talents in mathematics, art, and music.">التوحد ليس مرضاً بل طريقة مختلفة لرؤية العالم. كثير من أطفال التوحد لديهم مواهب استثنائية في الرياضيات والفن والموسيقى.</div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-ico">📌</div>
+        <div class="fcard-t" data-ar="التدخل المبكر" data-en="Early Intervention">التدخل المبكر</div>
+        <div class="fcard-d" data-ar="التشخيص والتدخل المبكر قبل سن الخامسة يُحدث فارقاً كبيراً في تطور الطفل ومساعدته على اكتساب المهارات الأساسية." data-en="Early diagnosis and intervention before age five makes a significant difference in child development and helps acquire basic skills.">التشخيص والتدخل المبكر قبل سن الخامسة يُحدث فارقاً كبيراً في تطور الطفل.</div>
+      </div>
+      <div class="fcard cta">
+        <div class="fcard-ico">🧩</div>
+        <div class="fcard-t" data-ar="سجّل طفلك الآن" data-en="Register Your Child Now">سجّل طفلك الآن</div>
+        <div class="fcard-d" data-ar="انضم للمنصة واحصل على متابعة متخصصة وآمنة لطفلك." data-en="Join the platform and get specialized, secure follow-up for your child.">انضم للمنصة واحصل على متابعة متخصصة وآمنة لطفلك.</div>
+        <a class="cta-a" href="index.html" data-ar="ابدأ التسجيل ←" data-en="Start Registration ←">ابدأ التسجيل ←</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <a class="flogo" href="#"><span>✦</span><span data-ar="نجوم التوحد" data-en="Autism Stars">نجوم التوحد</span></a>
+  <div class="fcopy" data-ar="جميع الحقوق محفوظة © 2026" data-en="All Rights Reserved © 2026">جميع الحقوق محفوظة © 2026</div>
+  <div class="ftech">Node.js · MongoDB · HTML</div>
+</footer>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.ss-slot').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='22px';cur.style.height='22px';cur.style.background='var(--moss)';curR.style.opacity='0';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--clay)';curR.style.opacity='.45';});
+});
+
+/* ADMIN */
+const API='http://localhost:5000/api/auth';
+function goAdmin(){
+  const token=localStorage.getItem('adminToken');
+  if(token){
+    fetch(`${API}/users`,{headers:{'Authorization':`Bearer ${token}`}})
+      .then(res=>{if(!res.ok)localStorage.removeItem('adminToken');window.location.href='admin.html';})
+      .catch(()=>window.location.href='admin.html');
+  }else{window.location.href='admin.html';}
+}
+
+/* STATS */
+async function loadStats(){
+  try{
+    const res=await fetch(`${API}/stats`);
+    const d=await res.json();
+    ['count-registered','s-reg'].forEach(id=>animateCount(id,d.total||0));
+    ['count-accepted','s-acc'].forEach(id=>animateCount(id,d.accepted||0));
+  }catch{
+    ['count-registered','count-accepted','s-reg','s-acc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='0';});
+  }
+}
+function animateCount(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  if(!target){el.textContent='0';return;}
+  let c=0;const step=Math.max(1,Math.ceil(target/40));
+  const t=setInterval(()=>{c=Math.min(c+step,target);el.textContent=c;if(c>=target)clearInterval(t);},40);
+}
+loadStats();
+
+/* LANG */
+function setLang(lang){
+  const isAr=lang==='ar';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=isAr?'rtl':'ltr';
+  document.getElementById('btn-ar').classList.toggle('active',isAr);
+  document.getElementById('btn-en').classList.toggle('active',!isAr);
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    const v=isAr?el.getAttribute('data-ar'):el.getAttribute('data-en');
+    if(v)el.textContent=v;
+  });
+}
+
+/* SCROLL REVEAL */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('up'),i*90);});
+},{threshold:.1});
+document.querySelectorAll('.rv,.rvl').forEach(el=>obs.observe(el));
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href').slice(1);
+    const el=document.getElementById(id);
+    if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'});}
+  });
+});
+</script>
+</body>
+</html>

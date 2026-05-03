@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نجوم — بوابة المشتركين</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --cream:#faf6ef;--warm:#f5ece0;
+  --clay:#c17b5c;--clay2:#e8a882;
+  --moss:#5a7c65;--moss2:#8dba9a;
+  --sky:#6fa3c4;--sky2:#a8d0e6;
+  --sun:#e8c45a;--sun2:#f5d98a;
+  --lilac:#9b7fb8;--lilac2:#c4a8d8;
+  --ink:#2c2318;--ink2:#5a4d3e;
+  --border:rgba(44,35,24,0.12);
+  --surface:#ffffff;
+  --err:#c0392b;--err-bg:rgba(192,57,43,0.08);
+  --ok:#5a7c65;--ok-bg:rgba(90,124,101,0.1);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Tajawal',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:2rem 1rem;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSOR ── */
+.cur{width:12px;height:12px;background:var(--clay);border-radius:50%;position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:multiply;}
+.cur-r{width:34px;height:34px;border:2px solid var(--clay);border-radius:50%;position:fixed;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);opacity:.4;transition:width .3s,height .3s;}
+
+/* ── NOISE ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
+
+/* ── BLOBS ── */
+.blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.28;pointer-events:none;z-index:0;animation:breathe 14s ease-in-out infinite;}
+.b1{width:500px;height:500px;background:#d4c4a8;top:-150px;right:-150px;animation-delay:0s;}
+.b2{width:380px;height:380px;background:#c4d8c8;bottom:-100px;left:-100px;animation-delay:-5s;}
+.b3{width:260px;height:260px;background:#c8d8e8;top:40%;left:20%;animation-delay:-9s;}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+
+/* ── DOTS ── */
+.dots{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(44,35,24,.055) 1px,transparent 1px);background-size:26px 26px;}
+
+/* ── LANG TOGGLE (floating top-right) ── */
+.lang-float{
+  position:fixed;top:1.2rem;
+  z-index:600;
+  display:flex;
+  background:rgba(250,246,239,.88);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1.5px solid rgba(193,123,92,.22);
+  border-radius:50px;overflow:hidden;
+  box-shadow:0 4px 18px rgba(44,35,24,.09);
+}
+/* position changes with dir */
+[dir="rtl"] .lang-float{left:1.2rem;}
+[dir="ltr"] .lang-float{right:1.2rem;}
+
+.lbtn{
+  padding:.32rem .9rem;border:none;background:transparent;
+  font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:800;
+  color:var(--ink2);cursor:pointer;transition:all .2s;
+  line-height:1;
+}
+.lbtn.active{background:var(--clay);color:#fff;border-radius:50px;}
+.lbtn:hover:not(.active){background:rgba(193,123,92,.1);}
+
+/* ── CARD ── */
+.card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:28px;
+  padding:2.8rem 2.4rem;
+  width:100%;max-width:500px;
+  position:relative;z-index:2;
+  box-shadow:0 20px 60px rgba(44,35,24,.1),0 4px 16px rgba(44,35,24,.06);
+}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── CHOICE ── */
+.logo-wrap{
+  width:78px;height:78px;
+  background:linear-gradient(135deg,var(--clay2),var(--clay));
+  border-radius:22px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;
+  margin:0 auto 1.6rem;
+  box-shadow:0 8px 30px rgba(193,123,92,.3);
+  animation:float0 6s ease-in-out infinite;
+}
+@keyframes float0{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+.main-title{text-align:center;font-size:1.6rem;font-weight:900;color:var(--ink);margin-bottom:.4rem;}
+.main-sub{text-align:center;color:var(--ink2);font-size:.87rem;margin-bottom:2.4rem;line-height:1.75;}
+
+.choice-btns{display:flex;flex-direction:column;gap:.9rem;}
+.choice-btn{
+  display:flex;align-items:center;gap:1.1rem;
+  padding:1.15rem 1.4rem;
+  border-radius:16px;cursor:pointer;
+  border:1.5px solid var(--border);
+  background:var(--cream);
+  transition:all .3s cubic-bezier(.34,1.4,.64,1);
+  text-align:right;text-decoration:none;color:var(--ink);
+}
+[dir="ltr"] .choice-btn{text-align:left;}
+.choice-btn:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(44,35,24,.1);}
+.choice-btn.reg:hover{border-color:rgba(90,124,101,.45);background:rgba(90,124,101,.05);}
+.choice-btn.log:hover{border-color:rgba(111,163,196,.45);background:rgba(111,163,196,.05);}
+
+.choice-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+  transition:transform .3s;
+}
+.choice-btn:hover .choice-icon{transform:scale(1.1) rotate(-4deg);}
+.choice-btn.reg .choice-icon{background:rgba(90,124,101,.12);}
+.choice-btn.log .choice-icon{background:rgba(111,163,196,.12);}
+
+.choice-text h3{font-size:.97rem;font-weight:800;margin-bottom:.18rem;}
+.choice-text p{font-size:.78rem;color:var(--ink2);}
+.choice-arrow{margin-right:auto;color:var(--clay);font-size:1.1rem;font-weight:700;}
+[dir="ltr"] .choice-arrow{margin-right:unset;margin-left:auto;}
+
+.home-link{
+  display:block;text-align:center;margin-top:1.4rem;
+  color:var(--ink2);font-size:.8rem;text-decoration:none;
+  transition:color .2s;
+}
+.home-link:hover{color:var(--clay);}
+
+/* ── SCREEN HEADER ── */
+.scr-hdr{display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem;}
+.back-btn{
+  width:38px;height:38px;border-radius:11px;
+  background:var(--cream);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1rem;color:var(--ink2);
+  transition:all .2s;flex-shrink:0;
+}
+.back-btn:hover{border-color:var(--clay);color:var(--clay);}
+.scr-title{font-size:1.15rem;font-weight:800;color:var(--ink);}
+
+/* ── SECTION LABEL ── */
+.sec-lbl{
+  font-size:.72rem;font-weight:900;color:var(--clay);
+  letter-spacing:.16em;text-transform:uppercase;
+  margin:1.4rem 0 .8rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── FORM ── */
+.fg{margin-bottom:.9rem;}
+label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);margin-bottom:.38rem;}
+input,select,textarea{
+  width:100%;padding:.72rem .9rem;
+  background:var(--cream);
+  border:1.5px solid var(--border);
+  border-radius:11px;color:var(--ink);
+  font-size:.88rem;font-family:'Tajawal',sans-serif;
+  transition:border-color .2s,box-shadow .2s;
+  appearance:none;-webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--clay);
+  box-shadow:0 0 0 3px rgba(193,123,92,.1);
+}
+select option{background:var(--surface);}
+textarea{resize:vertical;min-height:80px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+
+/* ── UPLOAD ── */
+.up-zone{
+  border:2px dashed var(--border);
+  border-radius:16px;padding:1.8rem 1rem;
+  text-align:center;cursor:pointer;
+  transition:all .3s;background:var(--cream);
+  position:relative;
+}
+.up-zone:hover,.up-zone.drag{border-color:var(--clay);background:rgba(193,123,92,.04);}
+.up-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.up-ico{font-size:2.2rem;margin-bottom:.55rem;display:block;}
+.up-title{font-size:.88rem;font-weight:800;color:var(--ink);margin-bottom:.25rem;}
+.up-sub{font-size:.76rem;color:var(--ink2);}
+.up-hint{font-size:.7rem;color:#9c9089;margin-top:.35rem;}
+
+.up-prog{display:none;margin-top:.75rem;}
+.up-prog.show{display:block;}
+.prog-bg{height:4px;background:var(--border);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--moss),var(--clay));border-radius:4px;transition:width .4s;}
+.prog-lbl{font-size:.7rem;color:var(--ink2);text-align:left;margin-top:.28rem;}
+
+.fp{display:none;align-items:center;gap:.9rem;background:rgba(90,124,101,.06);border:1.5px solid rgba(90,124,101,.25);border-radius:13px;padding:.85rem 1rem;margin-top:.75rem;}
+.fp.show{display:flex;}
+.fp-thumb{width:50px;height:50px;border-radius:10px;background:var(--cream);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;overflow:hidden;}
+.fp-thumb img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
+.fp-info{flex:1;text-align:right;min-width:0;}
+[dir="ltr"] .fp-info{text-align:left;}
+.fp-name{font-size:.82rem;font-weight:700;color:var(--moss);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fp-size{font-size:.72rem;color:var(--ink2);margin-top:.12rem;}
+.fp-ok{display:flex;align-items:center;gap:.25rem;font-size:.72rem;color:var(--moss);margin-top:.18rem;}
+.fp-rm{width:26px;height:26px;border-radius:7px;background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;color:var(--err);flex-shrink:0;transition:all .2s;}
+.fp-rm:hover{background:rgba(192,57,43,.15);}
+
+.cert-tip{margin-top:.65rem;padding:.65rem .85rem;background:rgba(193,123,92,.07);border:1px solid rgba(193,123,92,.2);border-radius:11px;font-size:.76rem;color:var(--clay);line-height:1.7;}
+
+/* ── BUTTONS ── */
+.sub-btn{
+  width:100%;padding:.88rem;border:none;border-radius:13px;
+  color:#fff;font-size:.97rem;font-family:'Tajawal',sans-serif;font-weight:800;
+  cursor:pointer;margin-top:.9rem;
+  transition:all .25s cubic-bezier(.34,1.4,.64,1);
+  position:relative;overflow:hidden;
+}
+.sub-btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.12);opacity:0;transition:opacity .2s;}
+.sub-btn:hover::before{opacity:1;}
+.sub-btn:hover{transform:translateY(-2px);}
+.sub-btn.moss{background:linear-gradient(135deg,var(--moss),#4a6a55);box-shadow:0 6px 20px rgba(90,124,101,.3);}
+.sub-btn.moss:hover{box-shadow:0 10px 28px rgba(90,124,101,.4);}
+.sub-btn.sky{background:linear-gradient(135deg,var(--sky),#5a90b4);box-shadow:0 6px 20px rgba(111,163,196,.3);}
+.sub-btn.sky:hover{box-shadow:0 10px 28px rgba(111,163,196,.4);}
+
+/* ── ALERTS ── */
+.alert{padding:.75rem .9rem;border-radius:11px;margin-bottom:.9rem;font-size:.85rem;display:none;font-weight:600;}
+.alert.ok{background:var(--ok-bg);border:1.5px solid rgba(90,124,101,.3);color:var(--ok);display:block;}
+.alert.err{background:var(--err-bg);border:1.5px solid rgba(192,57,43,.25);color:var(--err);display:block;}
+
+/* ── DASHBOARD ── */
+.dash-hero{text-align:center;padding:1rem 0 1.5rem;}
+.dash-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--clay2),var(--clay));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto .9rem;
+  box-shadow:0 6px 22px rgba(193,123,92,.28);
+}
+.dash-hero h2{font-size:1.35rem;font-weight:900;color:var(--ink);margin-bottom:.3rem;}
+.dash-hero p{color:var(--ink2);font-size:.86rem;line-height:1.7;}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.2rem;}
+.ii{background:var(--cream);border:1.5px solid var(--border);border-radius:13px;padding:.8rem 1rem;transition:border-color .2s;}
+.ii:hover{border-color:rgba(193,123,92,.3);}
+.ii-lbl{font-size:.68rem;font-weight:700;color:var(--ink2);margin-bottom:.22rem;text-transform:uppercase;letter-spacing:.06em;}
+.ii-val{font-size:.87rem;font-weight:700;color:var(--ink);}
+
+.lvl-badge{display:inline-block;padding:.18rem .7rem;border-radius:7px;font-size:.8rem;font-weight:800;}
+.lvl-خفيف,.lvl-Mild{background:rgba(90,124,101,.12);color:var(--moss);}
+.lvl-متوسط,.lvl-Moderate{background:rgba(232,196,90,.18);color:#a07828;}
+.lvl-شديد,.lvl-Severe{background:rgba(192,57,43,.1);color:var(--err);}
+
+.cert-card{display:flex;align-items:center;gap:.9rem;background:rgba(90,124,101,.06);border:1.5px solid rgba(90,124,101,.22);border-radius:14px;padding:.85rem 1rem;margin-bottom:1.2rem;}
+.cert-ico{width:44px;height:44px;border-radius:11px;background:rgba(90,124,101,.12);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.cert-info{flex:1;}
+.cert-name{font-size:.83rem;font-weight:700;color:var(--moss);}
+.cert-sub{font-size:.72rem;color:var(--ink2);margin-top:.1rem;}
+.cert-ok{font-size:.72rem;color:var(--moss);display:flex;align-items:center;gap:.25rem;}
+
+.notes-box{background:var(--cream);border:1.5px solid var(--border);border-radius:13px;padding:.85rem 1rem;margin-bottom:1.2rem;}
+
+.logout-btn{
+  display:block;width:100%;padding:.72rem;
+  background:transparent;border:1.5px solid var(--border);
+  border-radius:13px;color:var(--ink2);
+  font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;text-align:center;
+  transition:all .2s;margin-top:.5rem;
+}
+.logout-btn:hover{border-color:var(--err);color:var(--err);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .card{padding:2rem 1.4rem;border-radius:20px;}
+  .row{grid-template-columns:1fr;}
+  .info-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-r" id="curR"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+<div class="dots"></div>
+
+<!-- ── Language Toggle (floating) ── -->
+<div class="lang-float">
+  <button class="lbtn active" id="btn-ar" onclick="setLang('ar')">ع</button>
+  <button class="lbtn" id="btn-en" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="card">
+
+  <!-- ══ شاشة الاختيار | Choice Screen ══ -->
+  <div class="screen active" id="screen-choice">
+    <div class="logo-wrap">🧩</div>
+    <h1 class="main-title" data-ar="منصة نجوم التوحد" data-en="Autism Stars Platform">منصة نجوم التوحد</h1>
+    <p class="main-sub" data-ar="منصة متخصصة لمتابعة وتسجيل حالات أطفال التوحد" data-en="A specialized platform for tracking and registering autism cases">منصة متخصصة لمتابعة وتسجيل حالات أطفال التوحد</p>
+
+    <div class="choice-btns">
+      <div class="choice-btn reg" onclick="show('screen-register')">
+        <div class="choice-icon">📝</div>
+        <div class="choice-text">
+          <h3 data-ar="تسجيل مشترك جديد" data-en="New Member Registration">تسجيل مشترك جديد</h3>
+          <p data-ar="سجّل بيانات طفلك وانتظر الموافقة" data-en="Register your child's data and await approval">سجّل بيانات طفلك وانتظر الموافقة</p>
+        </div>
+        <div class="choice-arrow">←</div>
+      </div>
+      <div class="choice-btn log" onclick="show('screen-login')">
+        <div class="choice-icon">🔑</div>
+        <div class="choice-text">
+          <h3 data-ar="تسجيل الدخول" data-en="Sign In">تسجيل الدخول</h3>
+          <p data-ar="للمشتركين الذين تمت الموافقة عليهم" data-en="For members whose registration has been approved">للمشتركين الذين تمت الموافقة عليهم</p>
+        </div>
+        <div class="choice-arrow">←</div>
+      </div>
+    </div>
+
+    <a class="home-link" href="home.html">
+      <span data-ar="✦ العودة للصفحة الرئيسية" data-en="✦ Back to Home">✦ العودة للصفحة الرئيسية</span>
+    </a>
+  </div>
+
+  <!-- ══ شاشة التسجيل | Registration Screen ══ -->
+  <div class="screen" id="screen-register">
+    <div class="scr-hdr">
+      <div class="back-btn" onclick="show('screen-choice')">→</div>
+      <div class="scr-title" data-ar="📝 تسجيل مشترك جديد" data-en="📝 New Member Registration">📝 تسجيل مشترك جديد</div>
+    </div>
+
+    <div id="reg-alert" class="alert"></div>
+
+    <!-- Parent Info -->
+    <div class="sec-lbl" data-ar="👨‍👩‍👦 معلومات ولي الأمر" data-en="👨‍👩‍👦 Guardian Information">👨‍👩‍👦 معلومات ولي الأمر</div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="الاسم الأول *" data-en="First Name *">الاسم الأول *</label>
+        <input id="reg-fname" type="text" placeholder="أحمد" data-ph-ar="أحمد" data-ph-en="Ahmed">
+      </div>
+      <div class="fg">
+        <label data-ar="اسم العائلة *" data-en="Last Name *">اسم العائلة *</label>
+        <input id="reg-lname" type="text" placeholder="محمد" data-ph-ar="محمد" data-ph-en="Mohamed">
+      </div>
+    </div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="صلة القرابة *" data-en="Relationship *">صلة القرابة *</label>
+        <select id="reg-relationship">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="أب" data-ar="أب" data-en="Father">أب</option>
+          <option value="أم" data-ar="أم" data-en="Mother">أم</option>
+          <option value="وصي قانوني" data-ar="وصي قانوني" data-en="Legal Guardian">وصي قانوني</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label data-ar="رقم الهاتف *" data-en="Phone Number *">رقم الهاتف *</label>
+        <input id="reg-phone" type="tel" placeholder="xxxxxxxxxx">
+      </div>
+    </div>
+    <div class="fg">
+      <label data-ar="البريد الإلكتروني *" data-en="Email Address *">البريد الإلكتروني *</label>
+      <input id="reg-email" type="email" placeholder="example@email.com">
+    </div>
+    <div class="fg">
+      <label data-ar="كلمة المرور *" data-en="Password *">كلمة المرور *</label>
+      <input id="reg-pass" type="password" placeholder="••••••••">
+    </div>
+
+    <!-- Child Info -->
+    <div class="sec-lbl" data-ar="👶 معلومات الطفل" data-en="👶 Child Information">👶 معلومات الطفل</div>
+    <div class="fg">
+      <label data-ar="الاسم الكامل للطفل *" data-en="Child's Full Name *">الاسم الكامل للطفل *</label>
+      <input id="reg-childName" type="text" placeholder="اسم الطفل الثلاثي" data-ph-ar="اسم الطفل الثلاثي" data-ph-en="Child's full name">
+    </div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="تاريخ الميلاد *" data-en="Date of Birth *">تاريخ الميلاد *</label>
+        <input id="reg-birthDate" type="date">
+      </div>
+      <div class="fg">
+        <label data-ar="الجنس *" data-en="Gender *">الجنس *</label>
+        <select id="reg-gender">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="ذكر" data-ar="ذكر" data-en="Male">ذكر</option>
+          <option value="أنثى" data-ar="أنثى" data-en="Female">أنثى</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label data-ar="الولاية / المدينة *" data-en="State / City *">الولاية / المدينة *</label>
+      <input id="reg-city" type="text" placeholder="مثال: الجزائر العاصمة" data-ph-ar="مثال: الجزائر العاصمة" data-ph-en="e.g. Algiers">
+    </div>
+
+    <!-- Medical Info -->
+    <div class="sec-lbl" data-ar="🏥 المعلومات الطبية" data-en="🏥 Medical Information">🏥 المعلومات الطبية</div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="درجة التوحد *" data-en="Autism Level *">درجة التوحد *</label>
+        <select id="reg-autismLevel">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="خفيف" data-ar="خفيف" data-en="Mild">خفيف</option>
+          <option value="متوسط" data-ar="متوسط" data-en="Moderate">متوسط</option>
+          <option value="شديد" data-ar="شديد" data-en="Severe">شديد</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label data-ar="تاريخ التشخيص *" data-en="Diagnosis Date *">تاريخ التشخيص *</label>
+        <input id="reg-diagnosisDate" type="date">
+      </div>
+    </div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="اسم الطبيب المشخِّص *" data-en="Diagnosing Doctor *">اسم الطبيب المشخِّص *</label>
+        <input id="reg-doctorName" type="text" placeholder="د. محمد أحمد" data-ph-ar="د. محمد أحمد" data-ph-en="Dr. John Smith">
+      </div>
+      <div class="fg">
+        <label data-ar="المستشفى / المركز *" data-en="Hospital / Center *">المستشفى / المركز *</label>
+        <input id="reg-hospital" type="text" placeholder="مستشفى ..." data-ph-ar="مستشفى ..." data-ph-en="Hospital name...">
+      </div>
+    </div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="هل يتلقى علاجاً؟ *" data-en="Receiving Therapy? *">هل يتلقى علاجاً؟ *</label>
+        <select id="reg-hasTherapy" onchange="toggleTherapy(this.value)">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="نعم" data-ar="نعم" data-en="Yes">نعم</option>
+          <option value="لا" data-ar="لا" data-en="No">لا</option>
+        </select>
+      </div>
+      <div class="fg" id="therapyTypeGroup" style="display:none;">
+        <label data-ar="نوع العلاج" data-en="Therapy Type">نوع العلاج</label>
+        <select id="reg-therapyType">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="علاج نفسي" data-ar="علاج نفسي" data-en="Psychological">علاج نفسي</option>
+          <option value="علاج تخاطب" data-ar="علاج تخاطب" data-en="Speech Therapy">علاج تخاطب</option>
+          <option value="علاج سلوكي" data-ar="علاج سلوكي" data-en="Behavioral">علاج سلوكي</option>
+          <option value="علاج دوائي" data-ar="علاج دوائي" data-en="Medication">علاج دوائي</option>
+          <option value="متعدد الأنواع" data-ar="متعدد الأنواع" data-en="Multiple Types">متعدد الأنواع</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Medical Certificate -->
+    <div class="sec-lbl" data-ar="📄 الشهادة الطبية للتشخيص" data-en="📄 Medical Diagnosis Certificate">📄 الشهادة الطبية للتشخيص</div>
+    <div class="fg">
+      <label data-ar="صورة الشهادة الطبية الرسمية *" data-en="Official Medical Certificate Image *">صورة الشهادة الطبية الرسمية *</label>
+      <div class="up-zone" id="upload-zone"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <input type="file" id="medical-doc" accept="image/jpeg,image/png,image/jpg,application/pdf" onchange="handleFile(this)">
+        <span class="up-ico">🏥</span>
+        <div class="up-title" data-ar="اسحب الملف هنا أو انقر للاختيار" data-en="Drag file here or click to choose">اسحب الملف هنا أو انقر للاختيار</div>
+        <div class="up-sub" data-ar="صورة الشهادة الطبية الصادرة من الطبيب المختص" data-en="Medical certificate issued by the specialist doctor">صورة الشهادة الطبية الصادرة من الطبيب المختص</div>
+        <div class="up-hint" data-ar="JPG · PNG · PDF — الحجم الأقصى: 5 ميغابايت" data-en="JPG · PNG · PDF — Max size: 5 MB">JPG · PNG · PDF — الحجم الأقصى: 5 ميغابايت</div>
+      </div>
+
+      <div class="up-prog" id="up-prog">
+        <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="prog-lbl" id="prog-lbl" data-ar="جاري المعالجة..." data-en="Processing...">جاري المعالجة...</div>
+      </div>
+
+      <div class="fp" id="fp">
+        <div class="fp-thumb" id="fp-thumb">📄</div>
+        <div class="fp-info">
+          <div class="fp-name" id="fp-name">—</div>
+          <div class="fp-size" id="fp-size">—</div>
+          <div class="fp-ok">
+            <span>✅</span>
+            <span data-ar="تم إرفاق الملف بنجاح" data-en="File attached successfully">تم إرفاق الملف بنجاح</span>
+          </div>
+        </div>
+        <div class="fp-rm" onclick="removeFile()" title="Remove">✕</div>
+      </div>
+
+      <div class="cert-tip">
+        💡 <strong data-ar="تلميح:" data-en="Tip:">تلميح:</strong>
+        <span data-ar=" يمكنك تصوير الشهادة بهاتفك. تأكد من ظهور اسم الطبيب وختمه وتاريخ التشخيص بوضوح." data-en=" You can photograph the certificate with your phone. Make sure the doctor's name, stamp, and diagnosis date are clearly visible."> يمكنك تصوير الشهادة بهاتفك. تأكد من ظهور اسم الطبيب وختمه وتاريخ التشخيص بوضوح.</span>
+      </div>
+    </div>
+
+    <!-- Extra Info -->
+    <div class="sec-lbl" data-ar="📝 معلومات إضافية" data-en="📝 Additional Information">📝 معلومات إضافية</div>
+    <div class="row">
+      <div class="fg">
+        <label data-ar="القدرة على الكلام" data-en="Speaking Ability">القدرة على الكلام</label>
+        <select id="reg-speakingAbility">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="يتكلم بشكل طبيعي" data-ar="يتكلم بشكل طبيعي" data-en="Speaks normally">يتكلم بشكل طبيعي</option>
+          <option value="يتكلم جزئياً" data-ar="يتكلم جزئياً" data-en="Speaks partially">يتكلم جزئياً</option>
+          <option value="لا يتكلم" data-ar="لا يتكلم" data-en="Does not speak">لا يتكلم</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label data-ar="هل يذهب للمدرسة؟" data-en="Goes to School?">هل يذهب للمدرسة؟</label>
+        <select id="reg-goesToSchool">
+          <option value="" data-ar="اختر..." data-en="Choose...">اختر...</option>
+          <option value="نعم" data-ar="نعم" data-en="Yes">نعم</option>
+          <option value="لا" data-ar="لا" data-en="No">لا</option>
+          <option value="مدرسة خاصة" data-ar="مدرسة خاصة" data-en="Special School">مدرسة خاصة</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label data-ar="ملاحظات إضافية" data-en="Additional Notes">ملاحظات إضافية</label>
+      <textarea id="reg-notes" placeholder="أي معلومات أخرى تراها مهمة..." data-ph-ar="أي معلومات أخرى تراها مهمة..." data-ph-en="Any other relevant information..."></textarea>
+    </div>
+
+    <button class="sub-btn moss" onclick="register()">
+      <span data-ar="📤 إرسال الطلب" data-en="📤 Submit Request">📤 إرسال الطلب</span>
+    </button>
+  </div>
+
+  <!-- ══ شاشة الدخول | Login Screen ══ -->
+  <div class="screen" id="screen-login">
+    <div class="scr-hdr">
+      <div class="back-btn" onclick="show('screen-choice')">→</div>
+      <div class="scr-title" data-ar="🔑 تسجيل الدخول" data-en="🔑 Sign In">🔑 تسجيل الدخول</div>
+    </div>
+    <div id="login-alert" class="alert"></div>
+    <div class="fg">
+      <label data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</label>
+      <input id="login-email" type="email" placeholder="example@email.com">
+    </div>
+    <div class="fg">
+      <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+      <input id="login-pass" type="password" placeholder="••••••••">
+    </div>
+    <button class="sub-btn sky" onclick="login()">
+      <span data-ar="دخول ←" data-en="Sign In →">دخول ←</span>
+    </button>
+  </div>
+
+  <!-- ══ شاشة الداشبورد | Dashboard ══ -->
+  <div class="screen" id="screen-dashboard">
+    <div class="dash-hero">
+      <div class="dash-avatar">🌟</div>
+      <h2 data-ar="مرحباً بك!" data-en="Welcome!">مرحباً بك!</h2>
+      <p id="member-name" style="font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:.3rem;"></p>
+      <p data-ar="تم قبولك في المنصة. إليك ملف طفلك:" data-en="Your registration has been approved. Here is your child's profile:">تم قبولك في المنصة. إليك ملف طفلك:</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="ii"><div class="ii-lbl" data-ar="اسم الطفل" data-en="Child's Name">اسم الطفل</div><div class="ii-val" id="d-childName">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="درجة التوحد" data-en="Autism Level">درجة التوحد</div><div class="ii-val" id="d-autismLevel">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="تاريخ الميلاد" data-en="Date of Birth">تاريخ الميلاد</div><div class="ii-val" id="d-birthDate">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="الجنس" data-en="Gender">الجنس</div><div class="ii-val" id="d-gender">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="المدينة" data-en="City">المدينة</div><div class="ii-val" id="d-city">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="الطبيب المشخِّص" data-en="Diagnosing Doctor">الطبيب المشخِّص</div><div class="ii-val" id="d-doctorName">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="المستشفى" data-en="Hospital">المستشفى</div><div class="ii-val" id="d-hospital">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="نوع العلاج" data-en="Therapy Type">نوع العلاج</div><div class="ii-val" id="d-therapyType">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="القدرة على الكلام" data-en="Speaking Ability">القدرة على الكلام</div><div class="ii-val" id="d-speakingAbility">—</div></div>
+      <div class="ii"><div class="ii-lbl" data-ar="يذهب للمدرسة" data-en="Goes to School">يذهب للمدرسة</div><div class="ii-val" id="d-goesToSchool">—</div></div>
+    </div>
+
+    <div id="d-cert-wrap" style="display:none;">
+      <div class="sec-lbl" style="margin-top:0;" data-ar="📄 الشهادة الطبية المرفقة" data-en="📄 Attached Medical Certificate">📄 الشهادة الطبية المرفقة</div>
+      <div class="cert-card">
+        <div class="cert-ico">📄</div>
+        <div class="cert-info">
+          <div class="cert-name" id="d-cert-name">—</div>
+          <div class="cert-sub" data-ar="شهادة طبية رسمية مرفقة بالملف" data-en="Official medical certificate attached to file">شهادة طبية رسمية مرفقة بالملف</div>
+        </div>
+        <div class="cert-ok">✅ <span data-ar="مرفق" data-en="Attached">مرفق</span></div>
+      </div>
+    </div>
+
+    <div id="d-notes-wrap" style="display:none;" class="notes-box">
+      <div class="ii-lbl" data-ar="ملاحظات" data-en="Notes">ملاحظات</div>
+      <div id="d-notes" style="font-size:.88rem;margin-top:.3rem;color:var(--ink);"></div>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">
+      <span data-ar="خروج ←" data-en="Sign Out →">خروج ←</span>
+    </button>
+  </div>
+
+</div><!-- /card -->
+
+<script>
+const API='http://localhost:5000/api/auth';
+let selectedFile=null;
+let currentLang='ar';
+
+/* ── CURSOR ── */
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+function attachCursorHover(el){
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--moss)';curR.style.opacity='0';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';cur.style.background='var(--clay)';curR.style.opacity='.4';});
+}
+document.querySelectorAll('a,button,.choice-btn,.back-btn,.fp-rm,.lbtn').forEach(attachCursorHover);
+
+/* ── LANGUAGE ── */
+function setLang(lang){
+  currentLang=lang;
+  const isAr=lang==='ar';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=isAr?'rtl':'ltr';
+  document.getElementById('btn-ar').classList.toggle('active',isAr);
+  document.getElementById('btn-en').classList.toggle('active',!isAr);
+
+  /* Translate all data-ar / data-en elements */
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    const val=isAr?el.getAttribute('data-ar'):el.getAttribute('data-en');
+    if(val!==null) el.textContent=val;
+  });
+
+  /* Translate select options */
+  document.querySelectorAll('select option[data-ar]').forEach(opt=>{
+    const val=isAr?opt.getAttribute('data-ar'):opt.getAttribute('data-en');
+    if(val!==null) opt.textContent=val;
+  });
+
+  /* Translate placeholders */
+  document.querySelectorAll('[data-ph-ar]').forEach(el=>{
+    el.placeholder=isAr?el.getAttribute('data-ph-ar'):el.getAttribute('data-ph-en');
+  });
+
+  /* Fix arrows for direction */
+  document.querySelectorAll('.choice-arrow').forEach(el=>el.textContent=isAr?'←':'→');
+
+  /* Update progress label if visible */
+  const lbl=document.getElementById('prog-lbl');
+  if(lbl) lbl.textContent=isAr?'جاري المعالجة...':'Processing...';
+
+  /* Update file ok text */
+  document.querySelectorAll('.fp-ok span[data-ar]').forEach(el=>{
+    el.textContent=isAr?el.getAttribute('data-ar'):el.getAttribute('data-en');
+  });
+}
+
+/* ── SCREENS ── */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleTherapy(v){
+  document.getElementById('therapyTypeGroup').style.display=(v==='نعم'||v==='Yes')?'block':'none';
+}
+
+function showAlert(id,type,msg){
+  const el=document.getElementById(id);
+  el.className='alert '+type;
+  el.textContent=msg;
+}
+
+/* ── UPLOAD ── */
+function onDragOver(e){e.preventDefault();document.getElementById('upload-zone').classList.add('drag');}
+function onDragLeave(){document.getElementById('upload-zone').classList.remove('drag');}
+function onDrop(e){e.preventDefault();document.getElementById('upload-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processFile(f);}
+function handleFile(input){if(input.files&&input.files[0])processFile(input.files[0]);}
+
+function processFile(file){
+  const allowed=['image/jpeg','image/jpg','image/png','application/pdf'];
+  if(!allowed.includes(file.type)){
+    alert(currentLang==='ar'?'يُرجى اختيار صورة (JPG، PNG) أو ملف PDF فقط':'Please choose a JPG, PNG image or PDF file only');
+    return;
+  }
+  if(file.size>5*1024*1024){
+    alert(currentLang==='ar'?'حجم الملف يتجاوز 5 ميغابايت':'File size exceeds 5 MB');
+    return;
+  }
+  selectedFile=file;
+  const prog=document.getElementById('up-prog'),fill=document.getElementById('prog-fill'),lbl=document.getElementById('prog-lbl');
+  prog.classList.add('show');fill.style.width='0%';
+  lbl.textContent=currentLang==='ar'?'جاري المعالجة...':'Processing...';
+  let p=0;
+  const t=setInterval(()=>{
+    p+=Math.random()*25;
+    if(p>=100){
+      p=100;clearInterval(t);
+      lbl.textContent=currentLang==='ar'?'تم بنجاح ✓':'Done ✓';
+      setTimeout(()=>{prog.classList.remove('show');showFilePreview(file);},450);
+    }
+    fill.style.width=Math.min(p,100)+'%';
+  },110);
+}
+
+function showFilePreview(file){
+  document.getElementById('fp-name').textContent=file.name;
+  document.getElementById('fp-size').textContent=fmtSize(file.size);
+  const thumb=document.getElementById('fp-thumb');
+  if(file.type.startsWith('image/')){
+    const r=new FileReader();
+    r.onload=e=>thumb.innerHTML='<img src="'+e.target.result+'" alt="preview">';
+    r.readAsDataURL(file);
+  }else{thumb.textContent='📄';}
+  document.getElementById('fp').classList.add('show');
+  document.getElementById('upload-zone').style.display='none';
+  /* refresh lang on newly shown elements */
+  setLang(currentLang);
+}
+
+function removeFile(){
+  selectedFile=null;
+  document.getElementById('fp').classList.remove('show');
+  document.getElementById('upload-zone').style.display='block';
+  document.getElementById('medical-doc').value='';
+  document.getElementById('fp-thumb').textContent='📄';
+}
+
+function fmtSize(b){
+  if(currentLang==='ar'){
+    if(b<1024)return b+' بايت';
+    if(b<1048576)return (b/1024).toFixed(1)+' كيلوبايت';
+    return (b/1048576).toFixed(1)+' ميغابايت';
+  }else{
+    if(b<1024)return b+' B';
+    if(b<1048576)return (b/1024).toFixed(1)+' KB';
+    return (b/1048576).toFixed(1)+' MB';
+  }
+}
+
+/* ── REGISTER ── */
+async function register(){
+  if(!selectedFile){
+    showAlert('reg-alert','err',currentLang==='ar'?'⚠️ يرجى إرفاق الشهادة الطبية للتشخيص (*)':'⚠️ Please attach the medical diagnosis certificate (*)');
+    const z=document.getElementById('upload-zone');
+    z.style.borderColor='var(--err)';
+    setTimeout(()=>z.style.borderColor='',2500);
+    z.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const body={
+    firstName:document.getElementById('reg-fname').value.trim(),
+    lastName:document.getElementById('reg-lname').value.trim(),
+    relationship:document.getElementById('reg-relationship').value,
+    phone:document.getElementById('reg-phone').value.trim(),
+    email:document.getElementById('reg-email').value.trim(),
+    password:document.getElementById('reg-pass').value,
+    childName:document.getElementById('reg-childName').value.trim(),
+    birthDate:document.getElementById('reg-birthDate').value,
+    gender:document.getElementById('reg-gender').value,
+    city:document.getElementById('reg-city').value.trim(),
+    autismLevel:document.getElementById('reg-autismLevel').value,
+    diagnosisDate:document.getElementById('reg-diagnosisDate').value,
+    doctorName:document.getElementById('reg-doctorName').value.trim(),
+    hospital:document.getElementById('reg-hospital').value.trim(),
+    hasTherapy:document.getElementById('reg-hasTherapy').value,
+    therapyType:document.getElementById('reg-therapyType').value,
+    speakingAbility:document.getElementById('reg-speakingAbility').value,
+    goesToSchool:document.getElementById('reg-goesToSchool').value,
+    notes:document.getElementById('reg-notes').value.trim()
+  };
+  const req=['firstName','lastName','relationship','phone','email','password','childName','birthDate','gender','city','autismLevel','diagnosisDate','doctorName','hospital','hasTherapy'];
+  for(const f of req){
+    if(!body[f]){
+      showAlert('reg-alert','err',currentLang==='ar'?'يرجى ملء جميع الحقول الإلزامية (*)':'Please fill in all required fields (*)');
+      return;
+    }
+  }
+  try{
+    const fd=new FormData();
+    Object.entries(body).forEach(([k,v])=>fd.append(k,v));
+    fd.append('medicalCertificate',selectedFile,selectedFile.name);
+    const res=await fetch(API+'/register',{method:'POST',body:fd});
+    const data=await res.json();
+    showAlert('reg-alert',res.ok?'ok':'err',data.message);
+    if(res.ok)window.scrollTo({top:0,behavior:'smooth'});
+  }catch{
+    showAlert('reg-alert','err',currentLang==='ar'?'تعذر الاتصال بالخادم — تأكد أن الخادم يعمل':'Could not connect to server — make sure the server is running');
+  }
+}
+
+/* ── LOGIN ── */
+async function login(){
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-pass').value;
+  if(!email||!password){
+    showAlert('login-alert','err',currentLang==='ar'?'أدخل البريد وكلمة المرور':'Enter email and password');
+    return;
+  }
+  try{
+    const res=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data=await res.json();
+    if(res.ok){localStorage.setItem('token',data.token);localStorage.setItem('user',JSON.stringify(data.user));showDashboard(data.user);}
+    else showAlert('login-alert','err',data.message);
+  }catch{
+    showAlert('login-alert','err',currentLang==='ar'?'تعذر الاتصال بالخادم — تأكد أن الخادم يعمل':'Could not connect to server — make sure the server is running');
+  }
+}
+
+/* ── DASHBOARD ── */
+function showDashboard(user){
+  show('screen-dashboard');
+  document.getElementById('member-name').textContent=user.firstName+' '+user.lastName;
+  document.getElementById('d-childName').textContent=user.childName||'—';
+  document.getElementById('d-birthDate').textContent=user.birthDate||'—';
+  document.getElementById('d-gender').textContent=user.gender||'—';
+  document.getElementById('d-city').textContent=user.city||'—';
+  document.getElementById('d-doctorName').textContent=user.doctorName||'—';
+  document.getElementById('d-hospital').textContent=user.hospital||'—';
+  document.getElementById('d-therapyType').textContent=user.therapyType||(currentLang==='ar'?'لا يوجد':'None');
+  document.getElementById('d-speakingAbility').textContent=user.speakingAbility||'—';
+  document.getElementById('d-goesToSchool').textContent=user.goesToSchool||'—';
+  const lvl=user.autismLevel||'—';
+  document.getElementById('d-autismLevel').innerHTML='<span class="lvl-badge lvl-'+lvl+'">'+lvl+'</span>';
+  if(user.medicalCertificateUrl||user.certFileName){
+    document.getElementById('d-cert-wrap').style.display='block';
+    document.getElementById('d-cert-name').textContent=user.certFileName||(currentLang==='ar'?'شهادة_طبية.pdf':'medical_certificate.pdf');
+  }
+  if(user.notes){
+    document.getElementById('d-notes-wrap').style.display='block';
+    document.getElementById('d-notes').textContent=user.notes;
+  }
+  /* re-apply lang to newly visible elements */
+  setLang(currentLang);
+}
+
+/* ── LOGOUT ── */
+function logout(){localStorage.removeItem('token');localStorage.removeItem('user');show('screen-choice');}
+
+/* ── SESSION RESTORE ── */
+window.onload=()=>{
+  const u=JSON.parse(localStorage.getItem('user')||'null');
+  if(u)showDashboard(u);
+};
+</script>
+</body>
+</html>
