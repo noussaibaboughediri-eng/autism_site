@@ -29,4 +29,9 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+
+vrToken:        { type: String, default: null },
+vrTokenExpiry:  { type: Date,   default: null },
+vrSessions:     [{ date: Date, type: String }]
+
 module.exports = mongoose.model('User', userSchema);
