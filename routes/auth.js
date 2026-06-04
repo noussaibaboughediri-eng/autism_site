@@ -1,21 +1,21 @@
-const express    = require('express');
-const router     = express.Router();
-const bcrypt     = require('bcryptjs');
-const jwt        = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const multer     = require('multer');
-const path       = require('path');
-const fs         = require('fs');
-const User       = require('../models/User');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const User = require('../models/User');
 
 const uploadDir = path.join(__dirname, '../uploads/certificates');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
-  filename:    (req, file, cb) => {
+  filename: (req, file, cb) => {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1e6);
-    const ext    = path.extname(file.originalname);
+    const ext = path.extname(file.originalname);
     cb(null, 'cert-' + unique + ext);
   }
 });
@@ -76,7 +76,7 @@ router.post('/register', upload.single('medicalCertificate'), async (req, res) =
       autismLevel, diagnosisDate, doctorName, hospital,
       hasTherapy, therapyType, speakingAbility, goesToSchool, notes,
       medicalCertificate: req.file.filename,
-      certFileName:       req.file.originalname
+      certFileName: req.file.originalname
     }).save();
 
     res.status(201).json({ message: 'تم إرسال طلبك بنجاح، انتظر موافقة الإدارة' });
@@ -109,28 +109,17 @@ router.post('/login', async (req, res) => {
     res.json({
       token,
       user: {
-        firstName:          user.firstName,
-        lastName:           user.lastName,
-        email:              user.email,
-        childName:          user.childName,
-        birthDate:          user.birthDate,
-        gender:             user.gender,
-        city:               user.city,
-        autismLevel:        user.autismLevel,
-        diagnosisDate:      user.diagnosisDate,
-        doctorName:         user.doctorName,
-        hospital:           user.hospital,
-        hasTherapy:         user.hasTherapy,
-        therapyType:        user.therapyType,
-        speakingAbility:    user.speakingAbility,
-        goesToSchool:       user.goesToSchool,
-        notes:              user.notes,
-        certFileName:       user.certFileName,
-        medicalCertificate: user.medicalCertificate,
-        vrSessions:         user.vrSessions || []
+        firstName: user.firstName, lastName: user.lastName,
+        email: user.email, childName: user.childName,
+        birthDate: user.birthDate, gender: user.gender,
+        city: user.city, autismLevel: user.autismLevel,
+        diagnosisDate: user.diagnosisDate, doctorName: user.doctorName,
+        hospital: user.hospital, hasTherapy: user.hasTherapy,
+        therapyType: user.therapyType, speakingAbility: user.speakingAbility,
+        goesToSchool: user.goesToSchool, notes: user.notes,
+        certFileName: user.certFileName, medicalCertificate: user.medicalCertificate
       }
     });
-
   } catch (err) {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
@@ -175,7 +164,6 @@ router.get('/certificate/:filename', (req, res) => {
   } catch {
     return res.status(401).json({ message: 'توكن غير صالح' });
   }
-
   const filePath = path.join(__dirname, '../uploads/certificates', req.params.filename);
   if (!fs.existsSync(filePath)) return res.status(404).json({ message: 'الملف غير موجود' });
   res.sendFile(filePath);
@@ -188,8 +176,7 @@ router.patch('/users/:id/accept', adminAuth, async (req, res) => {
     await sendEmail(user.email, '🎉 تم قبول طلب تسجيل طفلك!', `
       <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
         <h2 style="color:#22c55e;">مرحباً ${user.firstName} ${user.lastName} 👋</h2>
-        <p>يسعدنا إبلاغك بأنه تم قبول طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
-        <p>يمكنك الآن تسجيل الدخول باستخدام بريدك الإلكتروني وكلمة المرور.</p>
+        <p>تم قبول طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
         <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
       </div>
     `);
@@ -207,7 +194,7 @@ router.patch('/users/:id/reject', adminAuth, async (req, res) => {
     await sendEmail(user.email, 'بشأن طلب تسجيل طفلك', `
       <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
         <h2 style="color:#ef4444;">عزيزي ${user.firstName} ${user.lastName}</h2>
-        <p>نأسف لإبلاغك بأنه تم رفض طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
+        <p>تم رفض طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
         <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
       </div>
     `);
@@ -220,43 +207,49 @@ router.patch('/users/:id/reject', adminAuth, async (req, res) => {
 
 router.get('/stats', async (req, res) => {
   try {
-    const total    = await User.countDocuments();
+    const total = await User.countDocuments();
     const accepted = await User.countDocuments({ status: 'accepted' });
-    const pending  = await User.countDocuments({ status: 'pending' });
+    const pending = await User.countDocuments({ status: 'pending' });
     res.json({ total, accepted, pending });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
 });
 
-// ─── توليد Token VR ───────────────────────────────────────────
+// ─── توليد رمز VR ─────────────────────────────────────────────
 router.post('/vr-token', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'غير مصرح' });
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'غير مصرح' });
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const vrToken = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const expiry = new Date(Date.now() + 10 * 60 * 1000);
-    await User.findByIdAndUpdate(decoded.id, { vrToken, vrTokenExpiry: expiry });
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let vrToken = '';
+    for (let i = 0; i < 6; i++)
+      vrToken += chars[Math.floor(Math.random() * chars.length)];
+
+    user.vrToken = vrToken;
+    user.vrTokenExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+
     res.json({ vrToken });
   } catch {
-    res.status(500).json({ message: 'خطأ في الخادم' });
+    res.status(401).json({ message: 'توكن غير صالح' });
   }
 });
 
-// ─── التحقق من Token VR وتسجيل الجلسة ───────────────────────
-router.post('/vr-connect', async (req, res) => {
+// ─── التحقق من رمز VR ────────────────────────────────────────
+router.post('/verify-vr-token', async (req, res) => {
+  const { vrToken } = req.body;
+  if (!vrToken) return res.status(400).json({ message: 'الرمز مطلوب' });
   try {
-    const { vrToken } = req.body;
-    const user = await User.findOne({ vrToken, vrTokenExpiry: { $gt: new Date() } });
-    if (!user) return res.status(400).json({ message: 'الرمز غير صالح أو منتهي الصلاحية' });
-    const session = { date: new Date(), type: 'VR Session' };
-    await User.findByIdAndUpdate(user._id, {
-      $push: { vrSessions: session },
-      vrToken: null,
-      vrTokenExpiry: null
-    });
-    res.json({ message: 'تم الاتصال بنجاح', userName: user.firstName + ' ' + user.lastName });
+    const user = await User.findOne({ vrToken: vrToken.toUpperCase() });
+    if (!user) return res.status(401).json({ message: 'رمز خاطئ' });
+    if (user.vrTokenExpiry < new Date())
+      return res.status(401).json({ message: 'انتهت صلاحية الرمز' });
+    res.json({ success: true, childName: user.childName, userId: user._id });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
