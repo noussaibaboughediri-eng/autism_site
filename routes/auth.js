@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -249,7 +250,12 @@ router.post('/verify-vr-token', async (req, res) => {
     if (!user) return res.status(401).json({ message: 'رمز خاطئ' });
     if (user.vrTokenExpiry < new Date())
       return res.status(401).json({ message: 'انتهت صلاحية الرمز' });
-    res.json({ success: true, childName: user.childName, userId: user._id });
+
+    const sessionNumber = (user.vrSessions ? user.vrSessions.length : 0) + 1;
+    user.vrSessions.push({ sessionNumber, date: new Date() });
+    await user.save();
+
+    res.json({ success: true, childName: user.childName, userId: user._id, sessionNumber });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
