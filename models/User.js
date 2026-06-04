@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const userSchema = new mongoose.Schema({
   firstName:            { type: String, required: true },
   lastName:             { type: String, required: true },
@@ -19,16 +20,15 @@ const userSchema = new mongoose.Schema({
   speakingAbility:      { type: String, default: '' },
   goesToSchool:         { type: String, default: '' },
   notes:                { type: String, default: '' },
-  medicalCertificate:   { type: String, default: '' },
-  certFileName:         { type: String, default: '' },
-  status: {
-    type: String,
-    enum: ['pending', 'accepted', 'rejected'],
-    default: 'pending'
-  },
-  vrToken:       { type: String },
-  vrTokenExpiry: { type: Date },
-  vrSessions:    [{ date: { type: Date }, sessionType: { type: String } }]
+  medicalCertificate:   { type: String, default: '' },   // مسار الملف على الخادم
+  certFileName:         { type: String, default: '' },   // اسم الملف الأصلي
+status: {
+      type: String,
+      enum: ['pending', 'accepted', 'rejected'],
+      default: 'pending'
+    },
+    vrToken: { type: String, default: '' },
+    vrTokenExpiry: { type: Date },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
