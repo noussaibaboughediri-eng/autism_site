@@ -269,4 +269,16 @@ router.post('/verify-vr-token', async (req, res) => {
   }
 });
 
+// ─── حذف المستخدم ─────────────────────────────────────────────
+router.delete('/users/:id', adminAuth, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
+    res.json({ message: 'تم حذف المستخدم بنجاح' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'خطأ في الخادم' });
+  }
+});
+
 module.exports = router;
