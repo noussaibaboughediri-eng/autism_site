@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -6,21 +5,9 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const User = require('../models/User');
 
-const uploadDir = path.join(__dirname, '../uploads/certificates');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e6);
-    const ext = path.extname(file.originalname);
-    cb(null, 'cert-' + unique + ext);
-  }
-});
-
+// ─── Multer: memory storage (بدون حفظ على القرص) ─────────────
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
   allowed.includes(file.mimetype)
@@ -29,11 +16,12 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
+// ─── Nodemailer ───────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -49,6 +37,7 @@ async function sendEmail(to, subject, html) {
   });
 }
 
+// ─── Register ─────────────────────────────────────────────────
 router.post('/register', upload.single('medicalCertificate'), async (req, res) => {
   try {
     const {
@@ -64,7 +53,6 @@ router.post('/register', upload.single('medicalCertificate'), async (req, res) =
 
     const existing = await User.findOne({ email });
     if (existing) {
-      fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'هذا البريد مسجل مسبقاً' });
     }
 
@@ -76,19 +64,20 @@ router.post('/register', upload.single('medicalCertificate'), async (req, res) =
       childName, birthDate, gender, city,
       autismLevel, diagnosisDate, doctorName, hospital,
       hasTherapy, therapyType, speakingAbility, goesToSchool, notes,
-      medicalCertificate: req.file.filename,
+      medicalCertificate: req.file.buffer.toString('base64'),
+      medicalCertificateType: req.file.mimetype,
       certFileName: req.file.originalname
     }).save();
 
     res.status(201).json({ message: 'تم إرسال طلبك بنجاح، انتظر موافقة الإدارة' });
 
   } catch (err) {
-    if (req.file) fs.unlink(req.file.path, () => {});
     console.error(err);
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
 });
 
+// ─── Login ────────────────────────────────────────────────────
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -118,7 +107,7 @@ router.post('/login', async (req, res) => {
         hospital: user.hospital, hasTherapy: user.hasTherapy,
         therapyType: user.therapyType, speakingAbility: user.speakingAbility,
         goesToSchool: user.goesToSchool, notes: user.notes,
-        certFileName: user.certFileName, medicalCertificate: user.medicalCertificate
+        certFileName: user.certFileName
       }
     });
   } catch (err) {
@@ -126,6 +115,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ─── Admin Login ──────────────────────────────────────────────
 router.post('/admin-login', (req, res) => {
   const { email, password } = req.body;
   if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
@@ -135,6 +125,7 @@ router.post('/admin-login', (req, res) => {
   res.status(401).json({ message: 'بيانات الأدمن خاطئة' });
 });
 
+// ─── Admin Auth Middleware ────────────────────────────────────
 function adminAuth(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
@@ -147,16 +138,18 @@ function adminAuth(req, res, next) {
   }
 }
 
+// ─── Get All Users ────────────────────────────────────────────
 router.get('/users', adminAuth, async (req, res) => {
   try {
-    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    const users = await User.find({}, '-password -medicalCertificate').sort({ createdAt: -1 });
     res.json(users);
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
 });
 
-router.get('/certificate/:filename', (req, res) => {
+// ─── عرض الشهادة الطبية ───────────────────────────────────────
+router.get('/certificate/:userId', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1] || req.query.token;
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
   try {
@@ -165,11 +158,24 @@ router.get('/certificate/:filename', (req, res) => {
   } catch {
     return res.status(401).json({ message: 'توكن غير صالح' });
   }
-  const filePath = path.join(__dirname, '../uploads/certificates', req.params.filename);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ message: 'الملف غير موجود' });
-  res.sendFile(filePath);
+
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user || !user.medicalCertificate) {
+      return res.status(404).json({ message: 'الملف غير موجود' });
+    }
+
+    const img = Buffer.from(user.medicalCertificate, 'base64');
+    res.set('Content-Type', user.medicalCertificateType || 'image/jpeg');
+    res.set('Content-Disposition', `inline; filename="${user.certFileName || 'certificate'}"`);
+    res.send(img);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'خطأ في الخادم' });
+  }
 });
 
+// ─── قبول المستخدم ────────────────────────────────────────────
 router.patch('/users/:id/accept', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'accepted' }, { new: true });
@@ -188,6 +194,7 @@ router.patch('/users/:id/accept', adminAuth, async (req, res) => {
   }
 });
 
+// ─── رفض المستخدم ─────────────────────────────────────────────
 router.patch('/users/:id/reject', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'rejected' }, { new: true });
@@ -206,6 +213,7 @@ router.patch('/users/:id/reject', adminAuth, async (req, res) => {
   }
 });
 
+// ─── Stats ────────────────────────────────────────────────────
 router.get('/stats', async (req, res) => {
   try {
     const total = await User.countDocuments();
