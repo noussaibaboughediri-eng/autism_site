@@ -23,11 +23,11 @@
 }
 html{scroll-behavior:smooth;}
 body{font-family:'Tajawal',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;cursor:none;}
- 
+
 /* CURSOR */
 .cur{width:12px;height:12px;background:var(--clay);border-radius:50%;position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:multiply;}
 .cur-r{width:34px;height:34px;border:2px solid var(--clay);border-radius:50%;position:fixed;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);opacity:.38;transition:width .3s,height .3s;}
- 
+
 /* NOISE */
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
 .dots{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(44,35,24,.05) 1px,transparent 1px);background-size:26px 26px;}
@@ -36,7 +36,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .b2{width:380px;height:380px;background:#c4d8c8;bottom:-100px;left:-100px;animation-delay:-5s;}
 .b3{width:260px;height:260px;background:#c8d8e8;top:45%;left:25%;animation-delay:-9s;}
 @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
- 
+
 /* ═══ LOGIN ═══ */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:2;padding:2rem 1rem;}
 .login-card{
@@ -58,13 +58,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 @keyframes float0{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 .login-card h2{text-align:center;font-size:1.5rem;font-weight:900;color:var(--ink);margin-bottom:.35rem;}
 .login-card .sub{text-align:center;color:var(--ink2);font-size:.86rem;margin-bottom:2rem;line-height:1.7;}
- 
+
 /* lang in login */
 .login-lang{display:flex;justify-content:center;margin-bottom:1.8rem;}
 .lang-pill{display:flex;background:var(--warm);border:1.5px solid var(--border);border-radius:50px;overflow:hidden;}
 .lbtn{padding:.3rem .9rem;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:.78rem;font-weight:800;color:var(--ink2);cursor:pointer;transition:all .2s;}
 .lbtn.active{background:var(--clay);color:#fff;border-radius:50px;}
- 
+
 .fg{margin-bottom:.9rem;}
 label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);margin-bottom:.38rem;}
 input{
@@ -75,7 +75,7 @@ input{
   transition:border-color .2s,box-shadow .2s;
 }
 input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,123,92,.1);}
- 
+
 .btn-gold{
   width:100%;padding:.88rem;border:none;border-radius:13px;
   background:linear-gradient(135deg,var(--clay2),var(--clay));
@@ -88,13 +88,13 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
 .btn-gold::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.12);opacity:0;transition:opacity .2s;}
 .btn-gold:hover::before{opacity:1;}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(193,123,92,.38);}
- 
+
 .alert{padding:.72rem .9rem;border-radius:11px;margin-bottom:.9rem;font-size:.84rem;display:none;font-weight:600;}
 .alert.err{background:var(--err-bg);border:1.5px solid rgba(192,57,43,.22);color:var(--err);display:block;}
- 
+
 /* ═══ DASHBOARD ═══ */
 #dashboard{display:none;min-height:100vh;position:relative;z-index:2;}
- 
+
 /* HEADER */
 .hdr{
   background:rgba(250,246,239,.88);
@@ -120,10 +120,10 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
   cursor:pointer;transition:all .2s;
 }
 .logout-btn:hover{border-color:var(--err);color:var(--err);}
- 
+
 /* CONTENT */
 .content{padding:2.5rem;max-width:1060px;margin:0 auto;}
- 
+
 /* TABS */
 .tabs{display:flex;gap:.6rem;margin-bottom:2rem;flex-wrap:wrap;}
 .tab{
@@ -135,7 +135,7 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
 }
 .tab:hover{border-color:var(--clay);color:var(--clay);}
 .tab.active{background:var(--clay);border-color:var(--clay);color:#fff;box-shadow:0 4px 14px rgba(193,123,92,.28);}
- 
+
 /* USER CARD */
 .req-card{
   background:var(--surface);border:1.5px solid var(--border);
@@ -145,19 +145,19 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
   animation:fadeUp .45s ease both;
 }
 .req-card:hover{box-shadow:0 10px 32px rgba(44,35,24,.1);transform:translateY(-2px);}
- 
+
 .req-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
- 
+
 .info h3{font-size:1rem;font-weight:800;color:var(--ink);margin-bottom:.45rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
 .info p{color:var(--ink2);font-size:.82rem;line-height:1.9;}
 .info .date{font-size:.72rem;color:var(--clay2);margin-top:.25rem;}
- 
+
 /* status */
 .status{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:7px;font-size:.72rem;font-weight:800;}
 .s-pending {background:var(--warn-bg);color:var(--warn);}
 .s-accepted{background:var(--ok-bg);color:var(--ok);}
 .s-rejected{background:var(--err-bg);color:var(--err);}
- 
+
 /* actions */
 .actions{display:flex;gap:.5rem;flex-shrink:0;flex-wrap:wrap;}
 .btn-accept{
@@ -181,7 +181,7 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
   font-family:'Tajawal',sans-serif;transition:all .2s;
 }
 .btn-delete:hover{background:var(--err-bg);border-color:rgba(192,57,43,.22);color:var(--err);}
- 
+
 /* child grid */
 .child-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
@@ -191,12 +191,12 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
 .ci:hover{border-color:rgba(193,123,92,.25);}
 .ci-lbl{font-size:.67rem;font-weight:700;color:var(--ink2);margin-bottom:.2rem;text-transform:uppercase;letter-spacing:.05em;}
 .ci-val{font-size:.83rem;font-weight:700;color:var(--ink);}
- 
+
 /* autism levels */
 .lvl-خفيف,.lvl-Mild   {color:var(--moss);font-weight:800;}
 .lvl-متوسط,.lvl-Moderate{color:var(--warn);font-weight:800;}
 .lvl-شديد,.lvl-Severe  {color:var(--err);font-weight:800;}
- 
+
 /* cert section */
 .cert-section{margin-top:1rem;padding-top:1rem;border-top:1.5px solid var(--border);}
 .cert-sec-title{font-size:.7rem;font-weight:900;color:var(--clay);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.65rem;}
@@ -219,11 +219,11 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
 }
 .btn-view:hover{background:rgba(90,124,101,.2);}
 .no-cert{font-size:.8rem;color:var(--ink2);padding:.45rem 0;display:flex;align-items:center;gap:.4rem;opacity:.65;}
- 
+
 /* empty */
 .empty{text-align:center;padding:4rem;color:var(--ink2);font-size:.95rem;}
 .empty .e-ico{font-size:2.5rem;margin-bottom:.8rem;}
- 
+
 /* ═══ MODAL ═══ */
 .modal-ov{
   position:fixed;inset:0;background:rgba(44,35,24,.55);
@@ -258,11 +258,11 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
   transition:all .2s;
 }
 .modal-confirm:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(192,57,43,.4);}
- 
+
 /* REVEAL */
 .rv{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
 .rv.up{opacity:1;transform:translateY(0);}
- 
+
 /* RESPONSIVE */
 @media(max-width:640px){
   .content{padding:1.5rem 1rem;}
@@ -273,14 +273,14 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
 </style>
 </head>
 <body>
- 
+
 <div class="cur" id="cur"></div>
 <div class="cur-r" id="curR"></div>
 <div class="blob b1"></div>
 <div class="blob b2"></div>
 <div class="blob b3"></div>
 <div class="dots"></div>
- 
+
 <!-- ═══ DELETE MODAL ═══ -->
 <div class="modal-ov" id="delete-modal">
   <div class="modal">
@@ -292,21 +292,21 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
     </div>
   </div>
 </div>
- 
+
 <!-- ═══ LOGIN ═══ -->
 <div class="login-wrap" id="login-section">
   <div class="login-card">
     <div class="login-logo">⚙️</div>
     <h2 data-ar="لوحة الإدارة" data-en="Admin Panel">لوحة الإدارة</h2>
     <p class="sub" data-ar="ادخل بيانات الأدمن للمتابعة" data-en="Enter admin credentials to continue">ادخل بيانات الأدمن للمتابعة</p>
- 
+
     <div class="login-lang">
       <div class="lang-pill">
         <button class="lbtn active" id="btn-ar" onclick="setLang('ar')">ع</button>
         <button class="lbtn" id="btn-en" onclick="setLang('en')">EN</button>
       </div>
     </div>
- 
+
     <div id="admin-alert" class="alert"></div>
     <div class="fg">
       <label data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</label>
@@ -319,10 +319,10 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
     <button class="btn-gold" onclick="adminLogin()" data-ar="دخول ←" data-en="Login ←">دخول ←</button>
   </div>
 </div>
- 
+
 <!-- ═══ DASHBOARD ═══ -->
 <div id="dashboard">
- 
+
   <div class="hdr">
     <div class="hdr-logo">
       <span class="hdr-star">✦</span>
@@ -337,7 +337,7 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
       <button class="logout-btn" onclick="adminLogout()" data-ar="خروج" data-en="Logout">خروج</button>
     </div>
   </div>
- 
+
   <div class="content">
     <div class="tabs" id="tabs-row">
       <button class="tab active" onclick="filterUsers('pending',this)" data-ar="⏳ بانتظار المراجعة" data-en="⏳ Pending Review">⏳ بانتظار المراجعة</button>
@@ -347,16 +347,16 @@ input:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(193,
     </div>
     <div id="users-list"></div>
   </div>
- 
+
 </div>
- 
+
 <script>
 const API='https://autism-site.onrender.com/api/auth';
 let allUsers=[];
 let currentFilter='pending';
 let deleteTargetId=null;
 let lang='ar';
- 
+
 /* ═══ CURSOR ═══ */
 const cur=document.getElementById('cur'),curR=document.getElementById('curR');
 let mx=0,my=0,rx=0,ry=0;
@@ -365,7 +365,7 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.le
 function curHover(){cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--moss)';curR.style.opacity='0';}
 function curLeave(){cur.style.width='12px';cur.style.height='12px';cur.style.background='var(--clay)';curR.style.opacity='.38';}
 document.addEventListener('mouseover',e=>{if(e.target.matches('a,button,.tab,.btn-accept,.btn-reject,.btn-delete,.btn-view,.choice-btn'))curHover();else curLeave();});
- 
+
 /* ═══ LANGUAGE ═══ */
 function setLang(l){
   lang=l;
@@ -380,7 +380,7 @@ function setLang(l){
   });
   if(document.getElementById('dashboard').style.display!=='none') renderUsers(currentFilter);
 }
- 
+
 /* ═══ ADMIN LOGIN ═══ */
 async function adminLogin(){
   const email=document.getElementById('admin-email').value.trim();
@@ -392,13 +392,13 @@ async function adminLogin(){
     else{const el=document.getElementById('admin-alert');el.className='alert err';el.textContent=data.message;}
   }catch{const el=document.getElementById('admin-alert');el.className='alert err';el.textContent=lang==='ar'?'تعذر الاتصال بالخادم':'Unable to connect to server';}
 }
- 
+
 async function showDashboard(){
   document.getElementById('login-section').style.display='none';
   document.getElementById('dashboard').style.display='block';
   await loadUsers();
 }
- 
+
 async function loadUsers(){
   const token=localStorage.getItem('adminToken');
   try{
@@ -409,14 +409,14 @@ async function loadUsers(){
     document.getElementById('users-list').innerHTML=`<p style="color:var(--err);padding:1rem;">${lang==='ar'?'خطأ في تحميل البيانات':'Error loading data'}</p>`;
   }
 }
- 
+
 function filterUsers(status,btn){
   currentFilter=status;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   renderUsers(status);
 }
- 
+
 /* ═══ عرض الشهادة ═══ */
 async function viewCertificate(userId){
   const token=localStorage.getItem('adminToken');
@@ -435,32 +435,39 @@ async function viewCertificate(userId){
     alert(lang==='ar'?'خطأ في تحميل الشهادة':'Error loading certificate');
   }
 }
- 
+
 /* ═══ RENDER ═══ */
 function renderUsers(status){
   const list=document.getElementById('users-list');
   const filtered=status==='all'?allUsers:allUsers.filter(u=>u.status===status);
- 
+
   if(filtered.length===0){
     list.innerHTML=`<div class="empty"><div class="e-ico">📭</div>${lang==='ar'?'لا توجد طلبات في هذا القسم':'No requests in this section'}</div>`;
     return;
   }
- 
+
   const labels ={pending:lang==='ar'?'⏳ قيد المراجعة':'⏳ Pending',accepted:lang==='ar'?'✅ مقبول':'✅ Accepted',rejected:lang==='ar'?'❌ مرفوض':'❌ Rejected'};
   const classes={pending:'s-pending',accepted:'s-accepted',rejected:'s-rejected'};
- 
+
   list.innerHTML=filtered.map((u,i)=>{
- 
-    /* cert block */
+
+    /* ═══ cert block — التعديل الرئيسي هنا ═══ */
+    // hasCertificate يأتي من الباكيند، أو نتحقق من certFileName مباشرة
+    const hasCert = u.hasCertificate || (u.certFileName && u.certFileName.trim() !== '');
+
     let certHtml='';
-    if(u.certFileName){
+    if(hasCert){
+      const displayName = u.certFileName && u.certFileName.trim() !== ''
+        ? u.certFileName
+        : (lang==='ar' ? 'شهادة طبية' : 'Medical Certificate');
+
       certHtml=`
         <div class="cert-section">
           <div class="cert-sec-title">${lang==='ar'?'📄 الشهادة الطبية للتشخيص':'📄 Medical Diagnosis Certificate'}</div>
           <div class="cert-card">
             <div class="cert-ico">📄</div>
             <div class="cert-info">
-              <div class="cert-name">${u.certFileName}</div>
+              <div class="cert-name">${displayName}</div>
               <div class="cert-sub">${lang==='ar'?'شهادة طبية رسمية مرفقة بالملف':'Official medical certificate attached to file'}</div>
             </div>
             <div class="cert-actions">
@@ -477,15 +484,15 @@ function renderUsers(status){
           <div class="no-cert">⚠️ ${lang==='ar'?'لم يتم إرفاق شهادة طبية':'No medical certificate attached'}</div>
         </div>`;
     }
- 
+
     /* autism level display */
     const lvlMap={خفيف:'Mild',متوسط:'Moderate',شديد:'Severe'};
     const lvlDisplay=lang==='ar'?(u.autismLevel||'—'):(lvlMap[u.autismLevel]||u.autismLevel||'—');
     const lvlClass=`lvl-${u.autismLevel}`;
- 
+
     /* date */
     const dateStr=new Date(u.createdAt).toLocaleDateString(lang==='ar'?'ar-DZ':'en-GB');
- 
+
     return `
       <div class="req-card rv" style="animation-delay:${i*0.06}s">
         <div class="req-top">
@@ -504,7 +511,7 @@ function renderUsers(status){
             <button class="btn-delete" onclick="openModal('${u._id}','${u.childName||u.firstName}')">${lang==='ar'?'🗑️ حذف':'🗑️ Delete'}</button>
           </div>
         </div>
- 
+
         <div class="child-grid">
           <div class="ci"><div class="ci-lbl">${lang==='ar'?'اسم الطفل':'Child Name'}</div><div class="ci-val">👶 ${u.childName||'—'}</div></div>
           <div class="ci"><div class="ci-lbl">${lang==='ar'?'درجة التوحد':'Autism Level'}</div><div class="ci-val"><span class="${lvlClass}">${lvlDisplay}</span></div></div>
@@ -518,11 +525,11 @@ function renderUsers(status){
           <div class="ci"><div class="ci-lbl">${lang==='ar'?'يذهب للمدرسة':'Goes to School'}</div><div class="ci-val">🏫 ${u.goesToSchool||'—'}</div></div>
           ${u.notes?`<div class="ci" style="grid-column:1/-1"><div class="ci-lbl">${lang==='ar'?'ملاحظات':'Notes'}</div><div class="ci-val">📝 ${u.notes}</div></div>`:''}
         </div>
- 
+
         ${certHtml}
       </div>`;
   }).join('');
- 
+
   /* trigger reveal */
   requestAnimationFrame(()=>{
     document.querySelectorAll('.rv').forEach((el,i)=>{
@@ -530,7 +537,7 @@ function renderUsers(status){
     });
   });
 }
- 
+
 /* ═══ DECIDE ═══ */
 async function decide(id,action){
   const token=localStorage.getItem('adminToken');
@@ -541,7 +548,7 @@ async function decide(id,action){
     else alert((lang==='ar'?'خطأ: ':'Error: ')+data.message);
   }catch{alert(lang==='ar'?'تعذر الاتصال بالخادم':'Unable to connect to server');}
 }
- 
+
 /* ═══ MODAL ═══ */
 function openModal(id,name){
   deleteTargetId=id;
@@ -564,9 +571,9 @@ async function confirmDelete(){
   }catch{alert(lang==='ar'?'تعذر الاتصال بالخادم':'Unable to connect to server');closeModal();}
 }
 document.getElementById('delete-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
- 
+
 function adminLogout(){localStorage.removeItem('adminToken');location.reload();}
- 
+
 window.onload=()=>{if(localStorage.getItem('adminToken'))showDashboard();};
 </script>
 </body>
