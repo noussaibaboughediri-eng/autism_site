@@ -23,11 +23,16 @@ const upload = multer({
 
 // ─── Nodemailer ───────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 async function sendEmail(to, subject, html) {
@@ -145,7 +150,6 @@ router.get('/users', adminAuth, async (req, res) => {
 
     const usersWithFlag = users.map(u => {
       const obj = u.toObject();
-      // hasCertificate = true إذا كان certFileName موجوداً وغير فارغ
       obj.hasCertificate = !!(obj.certFileName && obj.certFileName.trim() !== '');
       return obj;
     });
@@ -188,13 +192,17 @@ router.patch('/users/:id/accept', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'accepted' }, { new: true });
     if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
-    await sendEmail(user.email, '🎉 تم قبول طلب تسجيل طفلك!', `
-      <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
-        <h2 style="color:#22c55e;">مرحباً ${user.firstName} ${user.lastName} 👋</h2>
-        <p>تم قبول طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
-        <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
-      </div>
-    `);
+    try {
+      await sendEmail(user.email, '🎉 تم قبول طلب تسجيل طفلك!', `
+        <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
+          <h2 style="color:#22c55e;">مرحباً ${user.firstName} ${user.lastName} 👋</h2>
+          <p>تم قبول طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
+          <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
+        </div>
+      `);
+    } catch (emailErr) {
+      console.error('فشل إرسال إيميل القبول:', emailErr.message);
+    }
     res.json({ message: 'تم القبول وإرسال الإيميل بنجاح' });
   } catch (err) {
     console.error(err);
@@ -207,13 +215,17 @@ router.patch('/users/:id/reject', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'rejected' }, { new: true });
     if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
-    await sendEmail(user.email, 'بشأن طلب تسجيل طفلك', `
-      <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
-        <h2 style="color:#ef4444;">عزيزي ${user.firstName} ${user.lastName}</h2>
-        <p>تم رفض طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
-        <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
-      </div>
-    `);
+    try {
+      await sendEmail(user.email, 'بشأن طلب تسجيل طفلك', `
+        <div dir="rtl" style="font-family:Arial;max-width:500px;margin:auto;padding:24px;border:1px solid #eee;border-radius:12px;">
+          <h2 style="color:#ef4444;">عزيزي ${user.firstName} ${user.lastName}</h2>
+          <p>تم رفض طلب تسجيل طفلك <strong>${user.childName}</strong>.</p>
+          <p style="color:#888;font-size:13px;">فريق منصة أطفال التوحد 🧩</p>
+        </div>
+      `);
+    } catch (emailErr) {
+      console.error('فشل إرسال إيميل الرفض:', emailErr.message);
+    }
     res.json({ message: 'تم الرفض وإرسال الإيميل بنجاح' });
   } catch (err) {
     console.error(err);
