@@ -142,7 +142,15 @@ function adminAuth(req, res, next) {
 router.get('/users', adminAuth, async (req, res) => {
   try {
     const users = await User.find({}, '-password -medicalCertificate').sort({ createdAt: -1 });
-    res.json(users);
+
+    const usersWithFlag = users.map(u => {
+      const obj = u.toObject();
+      // hasCertificate = true إذا كان certFileName موجوداً وغير فارغ
+      obj.hasCertificate = !!(obj.certFileName && obj.certFileName.trim() !== '');
+      return obj;
+    });
+
+    res.json(usersWithFlag);
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
