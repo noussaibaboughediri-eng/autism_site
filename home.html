@@ -133,8 +133,6 @@ textarea{resize:vertical;min-height:80px;}
 .notes-box .ii-lbl{font-size:.68rem;font-weight:700;color:var(--ink2);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em;}
 .logout-btn{display:block;width:100%;padding:.72rem;background:transparent;border:1.5px solid var(--border);border-radius:13px;color:var(--ink2);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;margin-top:.5rem;}
 .logout-btn:hover{border-color:var(--err);color:var(--err);}
-
-/* VR TOKEN */
 .vr-token-box{
   background:linear-gradient(135deg,rgba(111,163,196,.08),rgba(193,123,92,.06));
   border:1.5px solid rgba(111,163,196,.3);
@@ -146,8 +144,6 @@ textarea{resize:vertical;min-height:80px;}
   font-family:'Righteous',sans-serif;
 }
 .vr-token-hint{font-size:.75rem;color:var(--ink2);margin-top:.4rem;}
-
-/* VR SESSIONS */
 .sessions-wrap{margin-bottom:1.2rem;}
 .session-item{
   display:flex;align-items:center;gap:.75rem;
@@ -163,7 +159,6 @@ textarea{resize:vertical;min-height:80px;}
 .session-info{flex:1;}
 .session-lbl{font-size:.7rem;font-weight:700;color:var(--ink2);}
 .session-date{font-size:.82rem;font-weight:700;color:var(--ink);}
-
 @media(max-width:480px){
   .card{padding:2rem 1.4rem;border-radius:20px;}
   .row{grid-template-columns:1fr;}
@@ -503,12 +498,19 @@ async function login(){
     if(res.ok){
       localStorage.setItem('token',data.token);
       localStorage.setItem('user',JSON.stringify(data.user));
+      clearSessions();
       showDashboard(data.user);
-      // جلب الجلسات من البـackend
       loadVRSessions();
     }
     else showAlert('login-alert','err',data.message);
   }catch{showAlert('login-alert','err','تعذر الاتصال بالخادم');}
+}
+
+/* مسح الجلسات من الواجهة */
+function clearSessions(){
+  document.getElementById('vr-sessions-wrap').style.display='none';
+  document.getElementById('vr-sessions-list').innerHTML='';
+  document.getElementById('vr-token-display').style.display='none';
 }
 
 /* DASHBOARD */
@@ -526,6 +528,8 @@ function showDashboard(user){
   document.getElementById('d-goesToSchool').textContent=user.goesToSchool||'—';
   const lvl=user.autismLevel||'—';
   document.getElementById('d-autismLevel').innerHTML='<span class="lvl-badge lvl-'+lvl+'">'+lvl+'</span>';
+  document.getElementById('d-cert-wrap').style.display='none';
+  document.getElementById('d-notes-wrap').style.display='none';
   if(user.medicalCertificateUrl||user.certFileName){
     document.getElementById('d-cert-wrap').style.display='block';
     document.getElementById('d-cert-name').textContent=user.certFileName||'شهادة_طبية.pdf';
@@ -570,7 +574,6 @@ function showVRSessions(sessions){
   const wrap=document.getElementById('vr-sessions-wrap');
   const list=document.getElementById('vr-sessions-list');
   wrap.style.display='block';
-  // عرض بترتيب عكسي (الأحدث أولاً)
   const sorted=[...sessions].reverse();
   list.innerHTML=sorted.map(s=>{
     const d=new Date(s.date);
@@ -587,11 +590,19 @@ function showVRSessions(sessions){
   }).join('');
 }
 
-function logout(){localStorage.removeItem('token');localStorage.removeItem('user');show('screen-choice');}
+/* LOGOUT */
+function logout(){
+  clearSessions();
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  show('screen-choice');
+}
 
 window.onload=async()=>{
+  const token=localStorage.getItem('token');
   const u=JSON.parse(localStorage.getItem('user')||'null');
-  if(u){
+  if(u&&token){
+    clearSessions();
     showDashboard(u);
     await loadVRSessions();
   }
