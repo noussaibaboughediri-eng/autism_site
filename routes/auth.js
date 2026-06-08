@@ -20,8 +20,6 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-
-
 // ─── Register ─────────────────────────────────────────────────
 router.post('/register', upload.single('medicalCertificate'), async (req, res) => {
   try {
@@ -244,6 +242,20 @@ router.post('/verify-vr-token', async (req, res) => {
     res.json({ success: true, childName: user.childName, userId: user._id, sessionNumber });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
+  }
+});
+
+// ─── جلب بيانات المستخدم الحالي (/me) ───────────────────────
+router.get('/me', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'غير مصرح' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id, '-password -medicalCertificate');
+    if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
+    res.json(user);
+  } catch {
+    res.status(401).json({ message: 'توكن غير صالح' });
   }
 });
 
