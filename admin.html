@@ -538,13 +538,59 @@ function renderUsers(status){
   });
 }
 
+/* ═══ EmailJS ═══ */
+const EMAILJS_SERVICE  = 'service_n7txl8g';
+const EMAILJS_TEMPLATE = 'template_rvot8sl';
+const EMAILJS_KEY      = 'KA3cebiOP-BpR0rKf';
+
+async function sendEmailJS(to, subject, message){
+  try{
+    await fetch('https://api.emailjs.com/api/v1.0/email/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        service_id: EMAILJS_SERVICE,
+        template_id: EMAILJS_TEMPLATE,
+        user_id: EMAILJS_KEY,
+        template_params:{
+          to_email: to,
+          subject: subject,
+          message: message,
+          name: 'منصة أطفال التوحد'
+        }
+      })
+    });
+  }catch(e){
+    console.error('فشل إرسال الإيميل:', e);
+  }
+}
+
 /* ═══ DECIDE ═══ */
 async function decide(id,action){
   const token=localStorage.getItem('adminToken');
   try{
     const res=await fetch(`${API}/users/${id}/${action==='accept'?'accept':'reject'}`,{method:'PATCH',headers:{'Authorization':`Bearer ${token}`}});
     const data=await res.json();
-    if(res.ok)await loadUsers();
+    if(res.ok){
+      // إرسال الإيميل من الفرونتيند
+      const user=allUsers.find(u=>u._id===id);
+      if(user){
+        if(action==='accept'){
+          await sendEmailJS(
+            user.email,
+            '🎉 تم قبول طلب تسجيل طفلك!',
+            `مرحباً ${user.firstName} ${user.lastName} 👋\n\nتم قبول طلب تسجيل طفلك ${user.childName}.\n\nفريق منصة أطفال التوحد 🧩`
+          );
+        }else{
+          await sendEmailJS(
+            user.email,
+            'بشأن طلب تسجيل طفلك',
+            `عزيزي ${user.firstName} ${user.lastName}\n\nتم رفض طلب تسجيل طفلك ${user.childName}.\n\nفريق منصة أطفال التوحد 🧩`
+          );
+        }
+      }
+      await loadUsers();
+    }
     else alert((lang==='ar'?'خطأ: ':'Error: ')+data.message);
   }catch{alert(lang==='ar'?'تعذر الاتصال بالخادم':'Unable to connect to server');}
 }
