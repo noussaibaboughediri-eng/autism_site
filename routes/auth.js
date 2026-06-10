@@ -6,7 +6,6 @@ const multer = require('multer');
 const path = require('path');
 const User = require('../models/User');
 
-// ─── Multer: memory storage (بدون حفظ على القرص) ─────────────
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
   allowed.includes(file.mimetype)
@@ -20,7 +19,6 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// ─── Register ─────────────────────────────────────────────────
 router.post('/register', upload.single('medicalCertificate'), async (req, res) => {
   try {
     const {
@@ -60,7 +58,6 @@ router.post('/register', upload.single('medicalCertificate'), async (req, res) =
   }
 });
 
-// ─── Login ────────────────────────────────────────────────────
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -98,7 +95,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ─── Admin Login ──────────────────────────────────────────────
 router.post('/admin-login', (req, res) => {
   const { email, password } = req.body;
   if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
@@ -108,7 +104,6 @@ router.post('/admin-login', (req, res) => {
   res.status(401).json({ message: 'بيانات الأدمن خاطئة' });
 });
 
-// ─── Admin Auth Middleware ────────────────────────────────────
 function adminAuth(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
@@ -121,24 +116,20 @@ function adminAuth(req, res, next) {
   }
 }
 
-// ─── Get All Users ────────────────────────────────────────────
 router.get('/users', adminAuth, async (req, res) => {
   try {
     const users = await User.find({}, '-password -medicalCertificate').sort({ createdAt: -1 });
-
     const usersWithFlag = users.map(u => {
       const obj = u.toObject();
       obj.hasCertificate = !!(obj.certFileName && obj.certFileName.trim() !== '');
       return obj;
     });
-
     res.json(usersWithFlag);
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
 });
 
-// ─── عرض الشهادة الطبية ───────────────────────────────────────
 router.get('/certificate/:userId', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1] || req.query.token;
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
@@ -148,13 +139,11 @@ router.get('/certificate/:userId', async (req, res) => {
   } catch {
     return res.status(401).json({ message: 'توكن غير صالح' });
   }
-
   try {
     const user = await User.findById(req.params.userId);
     if (!user || !user.medicalCertificate) {
       return res.status(404).json({ message: 'الملف غير موجود' });
     }
-
     const img = Buffer.from(user.medicalCertificate, 'base64');
     res.set('Content-Type', user.medicalCertificateType || 'image/jpeg');
     res.set('Content-Disposition', `inline; filename="${user.certFileName || 'certificate'}"`);
@@ -165,7 +154,6 @@ router.get('/certificate/:userId', async (req, res) => {
   }
 });
 
-// ─── قبول المستخدم ────────────────────────────────────────────
 router.patch('/users/:id/accept', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'accepted' }, { new: true });
@@ -177,7 +165,6 @@ router.patch('/users/:id/accept', adminAuth, async (req, res) => {
   }
 });
 
-// ─── رفض المستخدم ─────────────────────────────────────────────
 router.patch('/users/:id/reject', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { status: 'rejected' }, { new: true });
@@ -189,7 +176,6 @@ router.patch('/users/:id/reject', adminAuth, async (req, res) => {
   }
 });
 
-// ─── Stats ────────────────────────────────────────────────────
 router.get('/stats', async (req, res) => {
   try {
     const total = await User.countDocuments();
@@ -201,7 +187,6 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// ─── توليد رمز VR ─────────────────────────────────────────────
 router.post('/vr-token', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
@@ -225,7 +210,6 @@ router.post('/vr-token', async (req, res) => {
   }
 });
 
-// ─── التحقق من رمز VR ────────────────────────────────────────
 router.post('/verify-vr-token', async (req, res) => {
   const { vrToken } = req.body;
   if (!vrToken) return res.status(400).json({ message: 'الرمز مطلوب' });
@@ -236,16 +220,16 @@ router.post('/verify-vr-token', async (req, res) => {
       return res.status(401).json({ message: 'انتهت صلاحية الرمز' });
 
     const sessionNumber = (user.vrSessions ? user.vrSessions.length : 0) + 1;
-    user.vrSessions.push({ sessionNumber, date: new Date() });
+    user.vrSessions.push({ sessionNumber, date: new Date(), games: [] });
     await user.save();
 
-    res.json({ success: true, childName: user.childName, userId: user._id, sessionNumber });
+    // نرجع userId باش Unity يحفظه
+    res.json({ success: true, childName: user.childName, userId: user._id.toString(), sessionNumber });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
   }
 });
 
-// ─── جلب بيانات المستخدم الحالي (/me) ───────────────────────
 router.get('/me', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
@@ -259,7 +243,33 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// ─── حذف المستخدم ─────────────────────────────────────────────
+// ─── تسجيل وقت اللعبة ─────────────────────────────────────────
+router.post('/log-game', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'غير مصرح' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { gameName, durationSeconds } = req.body;
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
+
+    // نضيف اللعبة للجلسة الأخيرة
+    const lastSession = user.vrSessions[user.vrSessions.length - 1];
+    if (lastSession) {
+      if (!lastSession.games) lastSession.games = [];
+      lastSession.games.push({ gameName, durationSeconds });
+      user.markModified('vrSessions');
+      await user.save();
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'خطأ في الخادم' });
+  }
+});
+
 router.delete('/users/:id', adminAuth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
