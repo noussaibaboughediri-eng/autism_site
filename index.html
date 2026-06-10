@@ -435,6 +435,7 @@ textarea{resize:vertical;min-height:80px;}
       <span data-ar="🎮 الحصول على رمز VR" data-en="🎮 Get VR Code">🎮 الحصول على رمز VR</span>
     </button>
 
+
     <!-- ══ جلسات VR ══ -->
     <div id="d-vr-wrap">
       <div class="sec-lbl" style="margin-top:1.2rem;" data-ar="🎮 جلسات الواقع الافتراضي" data-en="🎮 VR Sessions">🎮 جلسات الواقع الافتراضي</div>
@@ -630,7 +631,7 @@ async function login() {
   }
 }
 
-/* ── VR CODE ── */
+/* ── VR TOKEN ── */
 async function getVRCode() {
   const btn = document.getElementById('vr-get-btn');
   const display = document.getElementById('vr-code-display');
@@ -643,17 +644,18 @@ async function getVRCode() {
 
   const token = localStorage.getItem('token');
   try {
-    const res = await fetch(API + '/vr-code', {
+    const res = await fetch(API + '/vr-token', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+      headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await res.json();
     display.classList.remove('loading');
-    if (res.ok && data.code) {
-      currentVRCode = data;
-      display.textContent = data.code;
+    if (res.ok && data.vrToken) {
+      currentVRCode = data.vrToken;
+      display.textContent = data.vrToken;
       document.getElementById('vr-copy-btn').style.display = 'inline-flex';
-      renderVRCodeExpiry(data.expiresAt);
+      document.getElementById('vr-code-exp').textContent =
+        currentLang === 'ar' ? '⏱ صالح لمدة 10 دقائق' : '⏱ Valid for 10 minutes';
     } else {
       display.textContent = '—';
       document.getElementById('vr-code-exp').textContent =
@@ -666,25 +668,12 @@ async function getVRCode() {
       currentLang === 'ar' ? 'خطأ في الاتصال بالخادم' : 'Server connection error';
   }
   btn.disabled = false;
-  btn.querySelector('span').setAttribute('data-ar', '🎮 الحصول على رمز VR');
-  btn.querySelector('span').setAttribute('data-en', '🎮 Get VR Code');
   btn.querySelector('span').textContent = currentLang === 'ar' ? '🔄 تجديد الرمز' : '🔄 Refresh Code';
 }
 
-function renderVRCodeExpiry(expiresAt) {
-  if (!expiresAt) return;
-  const exp = document.getElementById('vr-code-exp');
-  const diff = Math.max(0, Math.floor((new Date(expiresAt) - Date.now()) / 60000));
-  if (currentLang === 'ar') {
-    exp.textContent = diff > 0 ? '⏱ صالح لمدة ' + diff + ' دقيقة' : '⚠️ انتهت صلاحية الرمز';
-  } else {
-    exp.textContent = diff > 0 ? '⏱ Valid for ' + diff + ' minute(s)' : '⚠️ Code expired';
-  }
-}
-
 function copyVRCode() {
-  if (!currentVRCode || !currentVRCode.code) return;
-  navigator.clipboard.writeText(currentVRCode.code).then(() => {
+  if (!currentVRCode) return;
+  navigator.clipboard.writeText(currentVRCode).then(() => {
     const btn = document.getElementById('vr-copy-btn');
     const orig = btn.querySelector('span').textContent;
     btn.querySelector('span').textContent = currentLang === 'ar' ? '✅ تم النسخ' : '✅ Copied!';
