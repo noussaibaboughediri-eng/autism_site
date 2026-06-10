@@ -223,7 +223,6 @@ router.post('/verify-vr-token', async (req, res) => {
     user.vrSessions.push({ sessionNumber, date: new Date(), games: [] });
     await user.save();
 
-    // نرجع userId باش Unity يحفظه
     res.json({ success: true, childName: user.childName, userId: user._id.toString(), sessionNumber });
   } catch {
     res.status(500).json({ message: 'خطأ في الخادم' });
@@ -248,13 +247,12 @@ router.post('/log-game', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'غير مصرح' });
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { gameName, durationSeconds } = req.body;
 
-    const user = await User.findById(decoded.id);
+    // البحث بـ vrToken مباشرة لأن Unity يبعت رمز الـ 6 أحرف وليس JWT
+    const user = await User.findOne({ vrToken: token.toUpperCase() });
     if (!user) return res.status(404).json({ message: 'المستخدم غير موجود' });
 
-    // نضيف اللعبة للجلسة الأخيرة
     const lastSession = user.vrSessions[user.vrSessions.length - 1];
     if (lastSession) {
       if (!lastSession.games) lastSession.games = [];
