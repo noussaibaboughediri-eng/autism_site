@@ -105,6 +105,8 @@ textarea{resize:vertical;min-height:80px;}
 .sub-btn.moss:hover{box-shadow:0 10px 28px rgba(90,124,101,.4);}
 .sub-btn.sky{background:linear-gradient(135deg,var(--sky),#5a90b4);box-shadow:0 6px 20px rgba(111,163,196,.3);}
 .sub-btn.sky:hover{box-shadow:0 10px 28px rgba(111,163,196,.4);}
+.sub-btn.sun{background:linear-gradient(135deg,var(--sun),#d4a830);box-shadow:0 6px 20px rgba(232,196,90,.35);}
+.sub-btn.sun:hover{box-shadow:0 10px 28px rgba(232,196,90,.5);}
 .alert{padding:.75rem .9rem;border-radius:11px;margin-bottom:.9rem;font-size:.85rem;display:none;font-weight:600;}
 .alert.ok{background:var(--ok-bg);border:1.5px solid rgba(90,124,101,.3);color:var(--ok);display:block;}
 .alert.err{background:var(--err-bg);border:1.5px solid rgba(192,57,43,.25);color:var(--err);display:block;}
@@ -130,6 +132,50 @@ textarea{resize:vertical;min-height:80px;}
 .notes-box{background:var(--cream);border:1.5px solid var(--border);border-radius:13px;padding:.85rem 1rem;margin-bottom:1.2rem;}
 .logout-btn{display:block;width:100%;padding:.72rem;background:transparent;border:1.5px solid var(--border);border-radius:13px;color:var(--ink2);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;margin-top:.5rem;}
 .logout-btn:hover{border-color:var(--err);color:var(--err);}
+
+/* ── VR CODE BOX ── */
+.vr-code-box{
+  background:linear-gradient(135deg,rgba(155,127,184,.08),rgba(111,163,196,.08));
+  border:1.5px solid rgba(155,127,184,.3);
+  border-radius:16px;padding:1.2rem 1.2rem;
+  margin-bottom:1.2rem;text-align:center;
+}
+.vr-code-display{
+  font-size:2.4rem;font-weight:900;
+  letter-spacing:.3em;
+  color:var(--lilac);
+  font-family:'Righteous',sans-serif;
+  background:var(--surface);
+  border:2px dashed rgba(155,127,184,.4);
+  border-radius:12px;
+  padding:.65rem 1rem;
+  margin:.75rem 0;
+  min-height:62px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.vr-code-display.loading::after{
+  content:'';
+  width:22px;height:22px;
+  border:3px solid rgba(155,127,184,.3);
+  border-top-color:var(--lilac);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  position:absolute;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.vr-code-label{font-size:.75rem;color:var(--ink2);margin-bottom:.1rem;}
+.vr-code-exp{font-size:.72rem;color:var(--ink2);margin-top:.5rem;opacity:.75;}
+.vr-code-copy{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.32rem .85rem;
+  border:1.5px solid rgba(155,127,184,.4);
+  border-radius:8px;background:transparent;
+  color:var(--lilac);font-size:.76rem;font-weight:700;
+  font-family:'Tajawal',sans-serif;cursor:pointer;
+  transition:all .2s;margin-top:.4rem;
+}
+.vr-code-copy:hover{background:rgba(155,127,184,.1);border-color:var(--lilac);}
 
 /* ── VR SESSIONS ── */
 .vr-session{background:var(--cream);border:1.5px solid var(--border);border-radius:13px;padding:.85rem 1rem;margin-bottom:.75rem;transition:border-color .2s;}
@@ -344,6 +390,7 @@ textarea{resize:vertical;min-height:80px;}
       <p id="member-name" style="font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:.3rem;"></p>
       <p data-ar="تم قبولك في المنصة. إليك ملف طفلك:" data-en="Your registration has been approved. Here is your child's profile:">تم قبولك في المنصة. إليك ملف طفلك:</p>
     </div>
+
     <div class="info-grid">
       <div class="ii"><div class="ii-lbl" data-ar="اسم الطفل" data-en="Child's Name">اسم الطفل</div><div class="ii-val" id="d-childName">—</div></div>
       <div class="ii"><div class="ii-lbl" data-ar="درجة التوحد" data-en="Autism Level">درجة التوحد</div><div class="ii-val" id="d-autismLevel">—</div></div>
@@ -356,6 +403,7 @@ textarea{resize:vertical;min-height:80px;}
       <div class="ii"><div class="ii-lbl" data-ar="القدرة على الكلام" data-en="Speaking Ability">القدرة على الكلام</div><div class="ii-val" id="d-speakingAbility">—</div></div>
       <div class="ii"><div class="ii-lbl" data-ar="يذهب للمدرسة" data-en="Goes to School">يذهب للمدرسة</div><div class="ii-val" id="d-goesToSchool">—</div></div>
     </div>
+
     <div id="d-cert-wrap" style="display:none;">
       <div class="sec-lbl" style="margin-top:0;" data-ar="📄 الشهادة الطبية المرفقة" data-en="📄 Attached Medical Certificate">📄 الشهادة الطبية المرفقة</div>
       <div class="cert-card">
@@ -367,12 +415,27 @@ textarea{resize:vertical;min-height:80px;}
         <div class="cert-ok">✅ <span data-ar="مرفق" data-en="Attached">مرفق</span></div>
       </div>
     </div>
+
     <div id="d-notes-wrap" style="display:none;" class="notes-box">
       <div class="ii-lbl" data-ar="ملاحظات" data-en="Notes">ملاحظات</div>
       <div id="d-notes" style="font-size:.88rem;margin-top:.3rem;color:var(--ink);"></div>
     </div>
 
-    <!-- ══ قسم جلسات VR ══ -->
+    <!-- ══ رمز VR ══ -->
+    <div class="sec-lbl" style="margin-top:1.2rem;" data-ar="🥽 رمز الواقع الافتراضي" data-en="🥽 VR Access Code">🥽 رمز الواقع الافتراضي</div>
+    <div class="vr-code-box">
+      <div class="vr-code-label" data-ar="أدخل هذا الرمز في تطبيق VR للبدء" data-en="Enter this code in the VR app to start">أدخل هذا الرمز في تطبيق VR للبدء</div>
+      <div class="vr-code-display" id="vr-code-display">—</div>
+      <div class="vr-code-exp" id="vr-code-exp"></div>
+      <button class="vr-code-copy" id="vr-copy-btn" onclick="copyVRCode()" style="display:none;">
+        📋 <span data-ar="نسخ الرمز" data-en="Copy Code">نسخ الرمز</span>
+      </button>
+    </div>
+    <button class="sub-btn sun" onclick="getVRCode()" id="vr-get-btn">
+      <span data-ar="🎮 الحصول على رمز VR" data-en="🎮 Get VR Code">🎮 الحصول على رمز VR</span>
+    </button>
+
+    <!-- ══ جلسات VR ══ -->
     <div id="d-vr-wrap">
       <div class="sec-lbl" style="margin-top:1.2rem;" data-ar="🎮 جلسات الواقع الافتراضي" data-en="🎮 VR Sessions">🎮 جلسات الواقع الافتراضي</div>
       <div id="d-vr-sessions">
@@ -389,6 +452,7 @@ textarea{resize:vertical;min-height:80px;}
 const API = 'https://autism-site.onrender.com/api/auth';
 let selectedFile = null;
 let currentLang = 'ar';
+let currentVRCode = null;
 
 /* ── CURSOR ── */
 const cur = document.getElementById('cur'), curR = document.getElementById('curR');
@@ -426,6 +490,8 @@ function setLang(lang) {
   document.querySelectorAll('.fp-ok span[data-ar]').forEach(el => {
     el.textContent = isAr ? el.getAttribute('data-ar') : el.getAttribute('data-en');
   });
+  /* re-render VR code expiry label if code is shown */
+  if (currentVRCode && currentVRCode.expiresAt) renderVRCodeExpiry(currentVRCode.expiresAt);
 }
 
 /* ── SCREENS ── */
@@ -510,10 +576,8 @@ async function register() {
   if (!selectedFile) {
     showAlert('reg-alert', 'err', currentLang === 'ar' ? '⚠️ يرجى إرفاق الشهادة الطبية للتشخيص (*)' : '⚠️ Please attach the medical diagnosis certificate (*)');
     const z = document.getElementById('upload-zone');
-    z.style.borderColor = 'var(--err)';
-    setTimeout(() => z.style.borderColor = '', 2500);
-    z.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
+    z.style.borderColor = 'var(--err)'; setTimeout(() => z.style.borderColor = '', 2500);
+    z.scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
   }
   const body = {
     firstName: document.getElementById('reg-fname').value.trim(),
@@ -536,10 +600,8 @@ async function register() {
     goesToSchool: document.getElementById('reg-goesToSchool').value,
     notes: document.getElementById('reg-notes').value.trim()
   };
-  const req = ['firstName', 'lastName', 'relationship', 'phone', 'email', 'password', 'childName', 'birthDate', 'gender', 'city', 'autismLevel', 'diagnosisDate', 'doctorName', 'hospital', 'hasTherapy'];
-  for (const f of req) {
-    if (!body[f]) { showAlert('reg-alert', 'err', currentLang === 'ar' ? 'يرجى ملء جميع الحقول الإلزامية (*)' : 'Please fill in all required fields (*)'); return; }
-  }
+  const req = ['firstName','lastName','relationship','phone','email','password','childName','birthDate','gender','city','autismLevel','diagnosisDate','doctorName','hospital','hasTherapy'];
+  for (const f of req) { if (!body[f]) { showAlert('reg-alert', 'err', currentLang === 'ar' ? 'يرجى ملء جميع الحقول الإلزامية (*)' : 'Please fill in all required fields (*)'); return; } }
   try {
     const fd = new FormData();
     Object.entries(body).forEach(([k, v]) => fd.append(k, v));
@@ -568,12 +630,73 @@ async function login() {
   }
 }
 
+/* ── VR CODE ── */
+async function getVRCode() {
+  const btn = document.getElementById('vr-get-btn');
+  const display = document.getElementById('vr-code-display');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = currentLang === 'ar' ? '⏳ جاري الطلب...' : '⏳ Requesting...';
+  display.classList.add('loading');
+  display.textContent = '';
+  document.getElementById('vr-copy-btn').style.display = 'none';
+  document.getElementById('vr-code-exp').textContent = '';
+
+  const token = localStorage.getItem('token');
+  try {
+    const res = await fetch(API + '/vr-code', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    display.classList.remove('loading');
+    if (res.ok && data.code) {
+      currentVRCode = data;
+      display.textContent = data.code;
+      document.getElementById('vr-copy-btn').style.display = 'inline-flex';
+      renderVRCodeExpiry(data.expiresAt);
+    } else {
+      display.textContent = '—';
+      document.getElementById('vr-code-exp').textContent =
+        currentLang === 'ar' ? (data.message || 'تعذر الحصول على الرمز') : (data.message || 'Could not get code');
+    }
+  } catch {
+    display.classList.remove('loading');
+    display.textContent = '—';
+    document.getElementById('vr-code-exp').textContent =
+      currentLang === 'ar' ? 'خطأ في الاتصال بالخادم' : 'Server connection error';
+  }
+  btn.disabled = false;
+  btn.querySelector('span').setAttribute('data-ar', '🎮 الحصول على رمز VR');
+  btn.querySelector('span').setAttribute('data-en', '🎮 Get VR Code');
+  btn.querySelector('span').textContent = currentLang === 'ar' ? '🔄 تجديد الرمز' : '🔄 Refresh Code';
+}
+
+function renderVRCodeExpiry(expiresAt) {
+  if (!expiresAt) return;
+  const exp = document.getElementById('vr-code-exp');
+  const diff = Math.max(0, Math.floor((new Date(expiresAt) - Date.now()) / 60000));
+  if (currentLang === 'ar') {
+    exp.textContent = diff > 0 ? '⏱ صالح لمدة ' + diff + ' دقيقة' : '⚠️ انتهت صلاحية الرمز';
+  } else {
+    exp.textContent = diff > 0 ? '⏱ Valid for ' + diff + ' minute(s)' : '⚠️ Code expired';
+  }
+}
+
+function copyVRCode() {
+  if (!currentVRCode || !currentVRCode.code) return;
+  navigator.clipboard.writeText(currentVRCode.code).then(() => {
+    const btn = document.getElementById('vr-copy-btn');
+    const orig = btn.querySelector('span').textContent;
+    btn.querySelector('span').textContent = currentLang === 'ar' ? '✅ تم النسخ' : '✅ Copied!';
+    setTimeout(() => { btn.querySelector('span').textContent = orig; }, 2000);
+  });
+}
+
 /* ── FORMAT DURATION ── */
 function formatDuration(seconds) {
   if (!seconds && seconds !== 0) return '—';
   if (seconds < 60) return seconds + (currentLang === 'ar' ? ' ثانية' : 's');
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const m = Math.floor(seconds / 60), s = seconds % 60;
   if (currentLang === 'ar') return s > 0 ? m + ' د ' + s + ' ث' : m + ' دقيقة';
   return s > 0 ? m + 'm ' + s + 's' : m + 'min';
 }
@@ -590,20 +713,9 @@ function renderVRSessions(sessions) {
       year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
     const gamesHTML = (s.games && s.games.length > 0)
-      ? s.games.map(g => `
-          <div class="vr-game">
-            <span class="vr-game-name">🎯 ${g.gameName}</span>
-            <span class="vr-game-dur">⏱ ${formatDuration(g.durationSeconds)}</span>
-          </div>`).join('')
+      ? s.games.map(g => `<div class="vr-game"><span class="vr-game-name">🎯 ${g.gameName}</span><span class="vr-game-dur">⏱ ${formatDuration(g.durationSeconds)}</span></div>`).join('')
       : `<div class="vr-no-games">${currentLang === 'ar' ? '— لا توجد ألعاب مسجلة' : '— No games recorded'}</div>`;
-    return `
-      <div class="vr-session">
-        <div class="vr-session-hdr">
-          <span class="vr-session-num">${currentLang === 'ar' ? 'جلسة' : 'Session'} #${s.sessionNumber || '—'}</span>
-          <span class="vr-session-date">📅 ${date}</span>
-        </div>
-        ${gamesHTML}
-      </div>`;
+    return `<div class="vr-session"><div class="vr-session-hdr"><span class="vr-session-num">${currentLang === 'ar' ? 'جلسة' : 'Session'} #${s.sessionNumber || '—'}</span><span class="vr-session-date">📅 ${date}</span></div>${gamesHTML}</div>`;
   }).join('');
 }
 
@@ -631,7 +743,7 @@ async function showDashboard(user) {
     document.getElementById('d-notes').textContent = user.notes;
   }
 
-  /* ── جلب جلسات VR من /me ── */
+  /* جلب جلسات VR */
   const token = localStorage.getItem('token');
   if (token) {
     try {
@@ -644,7 +756,6 @@ async function showDashboard(user) {
           '<div class="vr-empty">⚠️ ' + (currentLang === 'ar' ? 'تعذر تحميل الجلسات' : 'Could not load sessions') + '</div>';
       }
     } catch (e) {
-      console.error('VR sessions error:', e);
       document.getElementById('d-vr-sessions').innerHTML =
         '<div class="vr-empty">⚠️ ' + (currentLang === 'ar' ? 'خطأ في الاتصال' : 'Connection error') + '</div>';
     }
@@ -657,7 +768,15 @@ async function showDashboard(user) {
 }
 
 /* ── LOGOUT ── */
-function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); show('screen-choice'); }
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  currentVRCode = null;
+  document.getElementById('vr-code-display').textContent = '—';
+  document.getElementById('vr-copy-btn').style.display = 'none';
+  document.getElementById('vr-code-exp').textContent = '';
+  show('screen-choice');
+}
 
 /* ── SESSION RESTORE ── */
 window.onload = () => {
