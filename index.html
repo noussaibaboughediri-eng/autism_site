@@ -768,9 +768,9 @@ function logout() {
 }
 
 /* ── SESSION RESTORE ── */
-window.onload = () => {
+window.onload = async () => {
   const u = JSON.parse(localStorage.getItem('user') || 'null');
-  if (u) showDashboard(u);
+  if (u) await showDashboard(u);
 };
 </script>
 </body>
